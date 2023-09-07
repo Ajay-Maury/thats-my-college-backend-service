@@ -1,34 +1,76 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { CONSTANTS, SWAGGER_CONSTANTS } from './utils/constants';
+import { CONSTANTS, SWAGGER_CONSTANTS, SWAGGER_TAGS } from './utils/constants';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  // Create a Nest.js application instance
   const app = await NestFactory.create(AppModule);
 
+  // Retrieve the configuration service for environment variables
   const configService = app.get<ConfigService>(ConfigService);
 
-  app.setGlobalPrefix(CONSTANTS.GLOBAL_PREFIX);
+  // Enable Cross-Origin Resource Sharing (CORS)
   app.enableCors();
 
-    // swagger config for APIs
-    const config = new DocumentBuilder()
+  // Set a global API prefix (e.g., '/api')
+  app.setGlobalPrefix(CONSTANTS.GLOBAL_PREFIX);
+
+  // Configure a global validation pipe with options
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,                  //  Remove unexpected properties from DTOs
+      transform: true,                  //  Automatically transform incoming data types
+      forbidNonWhitelisted: true,       //  Reject requests with non-whitelisted properties
+      transformOptions: {               //  Additional transformation options
+        enableImplicitConversion: true, //    - Enable implicit type conversion
+      },
+    }),
+  );
+
+  // Configure Swagger for API documentation
+  const swaggerConfig = new DocumentBuilder()
     .addApiKey(
-      { type: 'apiKey', name: 'x-thats-my-college-api-config-key', in: 'header' },
-      SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY, // The name of the API key security scheme for api key
+      {
+        type: 'apiKey',
+        name: 'x-thats-my-college-api-config-key',
+        in: 'header',
+      },
+      SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY, // API key security scheme name
     )
     .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
-      SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT,  // The name of the API key security scheme for bearers token
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+      },
+      SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT,  // Bearer token security scheme name
     )
     .setTitle(SWAGGER_CONSTANTS.TITLE)
     .setDescription(SWAGGER_CONSTANTS.DESCRIPTION)
     .setVersion(SWAGGER_CONSTANTS.VERSION)
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(SWAGGER_CONSTANTS.PATH, app, document);
+    .addTag(SWAGGER_TAGS.COLLEGE) //  Add a tag for API grouping
 
-  await app.listen(configService.get('PORT') ?? 4000);
+    .build();
+
+  // Create the Swagger document
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+
+  // Setup Swagger UI endpoint for API documentation
+  SwaggerModule.setup(SWAGGER_CONSTANTS.PATH, app, swaggerDocument, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',      //  Sort tags alphabetically
+      operationsSorter: 'alpha', //  Sort operations alphabetically within tags
+      docExpansion: 'none',     //  Collapse all documentation sections by default
+    },
+  });
+
+  // Start the application and listen on the specified port (fallback to 4000 if not provided)
+  await app.listen(configService.get('PORT') || 4000);
 }
+
+// Bootstrap the Nest.js application
 bootstrap();
