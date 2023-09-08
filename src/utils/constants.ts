@@ -14,5 +14,7 @@ export const SWAGGER_CONSTANTS = {
     SWAGGER_AUTH_SECURITY_SCHEMA_JWT : 'jwt'
   };
   
-  export enum SWAGGER_TAGS {}
+  export enum SWAGGER_TAGS {
+    COLLEGE= "college"
+  }
   
