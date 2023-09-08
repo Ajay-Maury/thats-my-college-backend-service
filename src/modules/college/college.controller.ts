@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } fr
 import { CollegeService } from './college.service';
 import { CreateCollegeDto } from './dto/create-college.dto';
 import { UpdateCollegeDto } from './dto/update-college.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CollegeResponseDto, CollegeSingleResponseDto } from './dto/response-college.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CollegeResponseDto, CollegeSingleResponseDto } from './dto/college-response.dto';
 
 @Controller('college')
 @ApiTags('college')
@@ -11,7 +11,8 @@ export class CollegeController {
   constructor(private readonly collegeService: CollegeService) { }
 
   @Post()
-  @ApiResponse({ status: HttpStatus.OK, type: CollegeResponseDto })
+  @ApiResponse({ status: HttpStatus.CREATED, type: CollegeResponseDto })
+  @ApiOperation({summary:"Create college"})
   public async createNewCollege(@Res() res, @Body() createCollegeDto: CreateCollegeDto): Promise<CollegeResponseDto> {
     try {
       const colleges = await this.collegeService.createCollege(createCollegeDto)
@@ -22,6 +23,7 @@ export class CollegeController {
   }
 
   @Get()
+  @ApiOperation({summary:"Get all colleges"})
   @ApiResponse({ status: HttpStatus.OK, type: CollegeResponseDto })
   public async getAllCollege(@Res() res): Promise<CollegeResponseDto> {
     try {
@@ -32,34 +34,37 @@ export class CollegeController {
     }
   }
 
-  @Get(':id')
+  @Get(':collegeId')
+  @ApiOperation({summary:"Get college by college id"})
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto })
-  public async getOneCollege(@Res() res, @Param("id") id: string): Promise<CollegeSingleResponseDto> {
+  public async getOneCollege(@Res() res, @Param("collegeId") collegeId: string): Promise<CollegeSingleResponseDto> {
     try {
-      const college = await this.collegeService.findOneCollege(id)
-      return res.status(HttpStatus.OK).json({ status: true, data: college, message: `Successfully fetched college with id #${id}` });
+      const college = await this.collegeService.findOneCollege(collegeId)
+      return res.status(HttpStatus.OK).json({ status: true, data: college, message: `Successfully fetched college with id #${collegeId}` });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ status: false, data: {}, message: error.message });
     }
   }
 
-  @Patch(':id')
+  @Patch(':collegeId')
+  @ApiOperation({summary:"Update college by college id"})
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto })
-  public async updateOneById(@Res() res, @Param('id') id: string, @Body() updateCollegeDto: UpdateCollegeDto): Promise<CollegeSingleResponseDto> {
+  public async updateOneById(@Res() res, @Param('collegeId') collegeId: string, @Body() updateCollegeDto: UpdateCollegeDto): Promise<CollegeSingleResponseDto> {
     try {
-      const college = await this.collegeService.updateCollegeById(id, updateCollegeDto)
-      return res.status(HttpStatus.OK).json({ status: true, data: college, message: `Successfully updated college with id #${id}` });
+      const college = await this.collegeService.updateCollegeById(collegeId, updateCollegeDto)
+      return res.status(HttpStatus.OK).json({ status: true, data: college, message: `Successfully updated college with id #${collegeId}` });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ status: false, data: {}, message: error.message });
     }
   }
 
-  @Delete(':id')
+  @Delete(':collegeId')
+  @ApiOperation({summary:"Delete college by college id"})
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto })
-  public async deleteOneById(@Res() res, @Param('id') id: string): Promise<CollegeSingleResponseDto> {
+  public async deleteOneById(@Res() res, @Param('collegeId') collegeId: string): Promise<CollegeSingleResponseDto> {
     try {
-      const college = await this.collegeService.removeCollegeById(id)
-      return res.status(HttpStatus.OK).json({ status: true, data: college, message: `Successfully deleted college with id #${id}` });
+      const college = await this.collegeService.removeCollegeById(collegeId)
+      return res.status(HttpStatus.OK).json({ status: true, data: college, message: `Successfully deleted college with id #${collegeId}` });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ status: false, data: {}, message: error.message });
     }

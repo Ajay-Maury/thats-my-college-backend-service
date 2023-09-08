@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './common/database/database.module'; // Fixed the typo here
 import { CollegeModule } from './modules/college/college.module';
+import { CoursesModule } from './modules/courses/courses.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CollegeModule } from './modules/college/college.module';
     }),
     DatabaseModule,   // Import the DatabaseModule for database connectivity
     CollegeModule,    // Import the CollegeModule for your college-related functionality
+    CoursesModule,
   ],
   controllers: [AppController], // Define controllers for handling HTTP requests
   providers: [AppService],     // Define application-level services
