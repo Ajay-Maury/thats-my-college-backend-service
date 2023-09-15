@@ -8,7 +8,7 @@ import { College, CollegeSchema } from './entities/college.entity';
   imports: [
     MongooseModule.forFeature([
       { name: College.name, schema: CollegeSchema }, // Define the feature with the schema
-    ])
+    ]),
   ],
   controllers: [CollegeController],
   providers: [CollegeService],

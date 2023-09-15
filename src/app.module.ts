@@ -8,14 +8,15 @@ import { CoursesModule } from './modules/courses/courses.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ // Configure global environment variables
+    ConfigModule.forRoot({
+      // Configure global environment variables
       isGlobal: true, // Make the configuration available globally
     }),
-    DatabaseModule,   // Import the DatabaseModule for database connectivity
-    CollegeModule,    // Import the CollegeModule for your college-related functionality
+    DatabaseModule, // Import the DatabaseModule for database connectivity
+    CollegeModule, // Import the CollegeModule for your college-related functionality
     CoursesModule,
   ],
   controllers: [AppController], // Define controllers for handling HTTP requests
-  providers: [AppService],     // Define application-level services
+  providers: [AppService], // Define application-level services
 })
 export class AppModule {} // AppModule is the root module of your Nest.js application
