@@ -21,10 +21,11 @@ async function bootstrap() {
   // Configure a global validation pipe with options
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,                  //  Remove unexpected properties from DTOs
-      transform: true,                  //  Automatically transform incoming data types
-      forbidNonWhitelisted: true,       //  Reject requests with non-whitelisted properties
-      transformOptions: {               //  Additional transformation options
+      whitelist: true, //  Remove unexpected properties from DTOs
+      transform: true, //  Automatically transform incoming data types
+      forbidNonWhitelisted: true, //  Reject requests with non-whitelisted properties
+      transformOptions: {
+        //  Additional transformation options
         enableImplicitConversion: true, //    - Enable implicit type conversion
       },
     }),
@@ -47,7 +48,7 @@ async function bootstrap() {
         bearerFormat: 'JWT',
         in: 'header',
       },
-      SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT,  // Bearer token security scheme name
+      SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT, // Bearer token security scheme name
     )
     .setTitle(SWAGGER_CONSTANTS.TITLE)
     .setDescription(SWAGGER_CONSTANTS.DESCRIPTION)
@@ -62,9 +63,9 @@ async function bootstrap() {
   // Setup Swagger UI endpoint for API documentation
   SwaggerModule.setup(SWAGGER_CONSTANTS.PATH, app, swaggerDocument, {
     swaggerOptions: {
-      tagsSorter: 'alpha',      //  Sort tags alphabetically
+      tagsSorter: 'alpha', //  Sort tags alphabetically
       operationsSorter: 'alpha', //  Sort operations alphabetically within tags
-      docExpansion: 'none',     //  Collapse all documentation sections by default
+      docExpansion: 'none', //  Collapse all documentation sections by default
     },
   });
 

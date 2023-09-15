@@ -8,10 +8,10 @@ import { Course, CourseSchema } from './entities/course.entity';
   imports: [
     MongooseModule.forFeature([
       { name: Course.name, schema: CourseSchema }, // Define the feature with the schema
-    ])
+    ]),
   ],
   controllers: [CoursesController],
   providers: [CoursesService],
-  exports: [CoursesService]
+  exports: [CoursesService],
 })
-export class CoursesModule { }
+export class CoursesModule {}
