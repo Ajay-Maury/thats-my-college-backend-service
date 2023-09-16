@@ -44,7 +44,7 @@ export class College extends Document {
   @Prop({ type: Number, required: true }) // Define a property named 'rating' as a required number
   rating: number;
 
-  @Prop({ type: Boolean, required: true }) // Define a property named 'featured' as a required boolean
+  @Prop({ type: Boolean, required: true, default: false }) // Define a property named 'featured' as a required boolean
   featured: boolean;
 }
 

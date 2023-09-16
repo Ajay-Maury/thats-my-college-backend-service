@@ -12,20 +12,21 @@ import {
 import { CollegeService } from './college.service';
 import { CreateCollegeDto } from './dto/create-college.dto';
 import { UpdateCollegeDto } from './dto/update-college.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'; // Import Swagger decorators.
 import {
   CollegeResponseDto,
   CollegeSingleResponseDto,
 } from './dto/college-response.dto';
 
-@Controller('college')
-@ApiTags('college')
+@Controller('college') // Defines the base route for this controller.
+@ApiTags('college') // Adds Swagger tags for documentation.
 export class CollegeController {
   constructor(private readonly collegeService: CollegeService) {}
 
+  // Create a new college.
   @Post()
-  @ApiResponse({ status: HttpStatus.CREATED, type: CollegeResponseDto })
-  @ApiOperation({ summary: 'Create college' })
+  @ApiOperation({ summary: 'Create college' }) // Describes the operation for Swagger.
+  @ApiResponse({ status: HttpStatus.CREATED, type: CollegeResponseDto }) // Describes the response for Swagger.
   public async createNewCollege(
     @Res() res,
     @Body() createCollegeDto: CreateCollegeDto,
@@ -46,9 +47,10 @@ export class CollegeController {
     }
   }
 
+  // Get all colleges.
   @Get()
-  @ApiOperation({ summary: 'Get all colleges' })
-  @ApiResponse({ status: HttpStatus.OK, type: CollegeResponseDto })
+  @ApiOperation({ summary: 'Get all colleges' }) // Describes the operation for Swagger.
+  @ApiResponse({ status: HttpStatus.OK, type: CollegeResponseDto }) // Describes the response for Swagger.
   public async getAllCollege(@Res() res): Promise<CollegeResponseDto> {
     try {
       const colleges = await this.collegeService.findAllCollege();
@@ -64,9 +66,10 @@ export class CollegeController {
     }
   }
 
+  // Get a college by college ID.
   @Get(':collegeId')
-  @ApiOperation({ summary: 'Get college by college id' })
-  @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto })
+  @ApiOperation({ summary: 'Get college by college id' }) // Describes the operation for Swagger.
+  @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async getOneCollege(
     @Res() res,
     @Param('collegeId') collegeId: string,
@@ -85,9 +88,10 @@ export class CollegeController {
     }
   }
 
+  // Update a college by college ID.
   @Patch(':collegeId')
-  @ApiOperation({ summary: 'Update college by college id' })
-  @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto })
+  @ApiOperation({ summary: 'Update college by college id' }) // Describes the operation for Swagger.
+  @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async updateOneById(
     @Res() res,
     @Param('collegeId') collegeId: string,
@@ -110,9 +114,10 @@ export class CollegeController {
     }
   }
 
+  // Delete a college and its courses by college ID.
   @Delete(':collegeId')
-  @ApiOperation({ summary: 'Delete college and courses by college id' })
-  @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto })
+  @ApiOperation({ summary: 'Delete college and courses by college id' }) // Describes the operation for Swagger.
+  @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async deleteOneById(
     @Res() res,
     @Param('collegeId') collegeId: string,

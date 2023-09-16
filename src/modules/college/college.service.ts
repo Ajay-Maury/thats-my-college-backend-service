@@ -8,10 +8,11 @@ import { CoursesService } from '../courses/courses.service';
 
 @Injectable()
 export class CollegeService {
+  // The constructor of the service class where dependencies are injected.
   constructor(
-    @InjectModel(College.name)
-    private collegeModal: Model<College>,
-    private readonly courseService: CoursesService,
+    @InjectModel(College.name) // Injects the College model using its name.
+    private collegeModal: Model<College>, // Represents the College model instance.
+    private readonly courseService: CoursesService, // Injects the CoursesService.
   ) {}
 
   async createCollege(createCollegeDto: CreateCollegeDto) {

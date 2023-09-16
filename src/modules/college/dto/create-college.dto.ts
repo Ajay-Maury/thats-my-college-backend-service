@@ -71,5 +71,5 @@ export class CreateCollegeDto {
 
   @IsBoolean()
   @IsNotEmpty()
-  featured: false;
+  featured: boolean;
 }
