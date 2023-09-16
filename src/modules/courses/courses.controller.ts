@@ -109,8 +109,8 @@ export class CoursesController {
     }
   }
 
-  @Get('get-all/colleges/details')
-  @ApiOperation({ summary: 'get course for all colleges' })
+  @Get('get-all/college-details')
+  @ApiOperation({ summary: 'get all courses with college details' })
   @ApiResponse({ status: HttpStatus.OK, type: CourseDataWithCollegeDetailsDto })
   public async getCourseForAllColleges(
     @Res() res,
@@ -120,7 +120,7 @@ export class CoursesController {
       return res.status(HttpStatus.OK).json({
         status: true,
         data: course,
-        message: `Successfully get course for all colleges`,
+        message: `Successfully get all courses with college details`,
       });
     } catch (error) {
       return res

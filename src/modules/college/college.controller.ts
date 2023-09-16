@@ -111,7 +111,7 @@ export class CollegeController {
   }
 
   @Delete(':collegeId')
-  @ApiOperation({ summary: 'Delete college by college id' })
+  @ApiOperation({ summary: 'Delete college and courses by college id' })
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto })
   public async deleteOneById(
     @Res() res,
@@ -122,7 +122,7 @@ export class CollegeController {
       return res.status(HttpStatus.OK).json({
         status: true,
         data: college,
-        message: `Successfully deleted college with id #${collegeId}`,
+        message: `Successfully deleted college and courses with college id #${collegeId}`,
       });
     } catch (error) {
       return res

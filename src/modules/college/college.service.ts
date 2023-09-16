@@ -4,12 +4,14 @@ import { UpdateCollegeDto } from './dto/update-college.dto';
 import { College } from './entities/college.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { CoursesService } from '../courses/courses.service';
 
 @Injectable()
 export class CollegeService {
   constructor(
     @InjectModel(College.name)
     private collegeModal: Model<College>,
+    private readonly courseService: CoursesService,
   ) {}
 
   async createCollege(createCollegeDto: CreateCollegeDto) {
@@ -42,6 +44,10 @@ export class CollegeService {
 
   async removeCollegeById(id: string) {
     const college = await this.collegeModal.findByIdAndDelete(id);
+    const collegeCourse = await this.courseService.findCourseByCollegeId(id);
+    if (collegeCourse) {
+      await this.courseService.removeCourseByCollegeId(id);
+    }
     if (!college) {
       throw new NotFoundException(`College with id #${id} not found`);
     }
