@@ -1,5 +1,3 @@
-import { BranchesDto } from './create-college.dto';
-
 export class CollegeResponseData {
   readonly _id: string;
   readonly name: string;
@@ -12,7 +10,6 @@ export class CollegeResponseData {
   readonly university: string;
   readonly logo: string;
   readonly image: string[];
-  readonly branches: BranchesDto[];
   readonly message: string;
   readonly details: string;
   readonly rating: number;

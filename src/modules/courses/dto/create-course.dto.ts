@@ -15,7 +15,16 @@ export class CourseDto {
 
   @IsNotEmpty()
   @IsString()
+  fullName: string;
+
+  @IsNotEmpty()
+  @IsString()
   fee: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  branches: string[];
 
   @IsNotEmpty()
   @IsString()

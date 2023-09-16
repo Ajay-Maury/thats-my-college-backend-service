@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
@@ -6,19 +5,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
-  ValidateNested,
 } from 'class-validator';
-
-export class BranchesDto {
-  @IsNotEmpty()
-  @IsString()
-  course: string;
-
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
-  branches: string[];
-}
 
 export class CreateCollegeDto {
   @IsString()
@@ -69,12 +56,6 @@ export class CreateCollegeDto {
   @ArrayNotEmpty()
   @IsString({ each: true })
   image: string[];
-
-  @IsArray()
-  @ArrayNotEmpty()
-  @ValidateNested({ each: true }) // Use ValidateNested decorator to validate each item in the array
-  @Type(() => BranchesDto) // Specify the type for validation
-  branches: BranchesDto[];
 
   @IsString()
   @IsNotEmpty()

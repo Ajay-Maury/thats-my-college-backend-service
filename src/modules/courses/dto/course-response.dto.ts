@@ -2,6 +2,8 @@ import { CollegeResponseData } from 'src/modules/college/dto/college-response.dt
 
 export class Course {
   readonly courseName: string;
+  readonly fullName: string;
+  readonly branches: string[];
   readonly fee: string;
   readonly eligibility: string;
   readonly duration: string;

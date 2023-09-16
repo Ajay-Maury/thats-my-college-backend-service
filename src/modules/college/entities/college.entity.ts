@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { BranchesDto } from '../dto/create-college.dto';
 
 @Schema({ collection: 'colleges' }) // Define the schema for the 'colleges' collection in MongoDB
 export class College extends Document {
@@ -35,9 +34,6 @@ export class College extends Document {
 
   @Prop({ type: [String], required: true }) // Define a property named 'image' as an array of required strings
   image: string[];
-
-  @Prop({ type: Array<BranchesDto>, required: true }) // Define a property named 'branches' as an array of objects adhering to the BranchesDto schema
-  branches: BranchesDto[];
 
   @Prop({ type: String, required: true }) // Define a property named 'message' as a required string
   message: string;
