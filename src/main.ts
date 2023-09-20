@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { CONSTANTS, SWAGGER_CONSTANTS, SWAGGER_TAGS } from './utils/constants';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggerProvider } from './logger/logger.provider';
 
 async function bootstrap() {
   // Create a Nest.js application instance
@@ -14,6 +15,9 @@ async function bootstrap() {
 
   // Enable Cross-Origin Resource Sharing (CORS)
   app.enableCors();
+
+  // Adding bunyan for logs
+  app.useLogger(new LoggerProvider().Get());
 
   // Set a global API prefix (e.g., '/api')
   app.setGlobalPrefix(CONSTANTS.GLOBAL_PREFIX);
