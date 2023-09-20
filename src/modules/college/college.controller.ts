@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   Res,
+  Logger,
 } from '@nestjs/common';
 import { CollegeService } from './college.service';
 import { CreateCollegeDto } from './dto/create-college.dto';
@@ -21,6 +22,8 @@ import {
 @Controller('college') // Defines the base route for this controller.
 @ApiTags('college') // Adds Swagger tags for documentation.
 export class CollegeController {
+  private readonly logger = new Logger(CollegeService.name);
+
   constructor(private readonly collegeService: CollegeService) {}
 
   // Create a new college.
@@ -32,15 +35,18 @@ export class CollegeController {
     @Body() createCollegeDto: CreateCollegeDto,
   ): Promise<CollegeResponseDto> {
     try {
+      this.logger.log(`Initiated creating new college`);
       const colleges = await this.collegeService.createCollege(
         createCollegeDto,
       );
+      this.logger.log(`Successfully created new college`);
       return res.status(HttpStatus.OK).json({
         status: true,
         data: colleges,
         message: `Successfully created college`,
       });
     } catch (error) {
+      this.logger.error(`Failed to create new college`, error);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: false, data: [], message: error.message });

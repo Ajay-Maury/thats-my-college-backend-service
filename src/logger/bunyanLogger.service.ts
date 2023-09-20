@@ -1,6 +1,5 @@
 import { LoggerService } from '@nestjs/common';
 import * as Bunyan from 'bunyan';
-import chalk from 'chalk'; // Import chalk for color formatting
 import { CONSTANTS } from 'src/utils/constants';
 
 export class BunyanLoggerService implements LoggerService {
@@ -14,27 +13,22 @@ export class BunyanLoggerService implements LoggerService {
   }
 
   log(message: any, ...optionalParams: any[]) {
-    const coloredMessage = chalk.green(message); // Green for log messages
-    this._logger.info(coloredMessage, optionalParams);
+    this._logger.info(message, optionalParams);
   }
 
   error(message: string, ...optionalParams: any[]) {
-    const coloredMessage = chalk.red(message); // Red for error messages
-    this._logger.error(coloredMessage, optionalParams);
+    this._logger.error(message, optionalParams);
   }
 
   warn(message: any, ...optionalParams: any[]) {
-    const coloredMessage = chalk.yellow(message); // Yellow for warnings
-    this._logger.warn(coloredMessage, optionalParams);
+    this._logger.warn(message, optionalParams);
   }
 
   debug(message: any, ...optionalParams: any[]) {
-    const coloredMessage = chalk.blue(message); // Blue for debug messages
-    this._logger.debug(coloredMessage, optionalParams);
+    this._logger.debug(message, optionalParams);
   }
 
   verbose(message: any, ...optionalParams: any[]) {
-    const coloredMessage = chalk.gray(message); // Gray for verbose messages
-    this._logger.debug(coloredMessage, optionalParams);
+    this._logger.debug(message, optionalParams);
   }
 }

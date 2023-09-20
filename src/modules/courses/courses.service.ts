@@ -5,16 +5,22 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Course } from './entities/course.entity';
 import { Model } from 'mongoose';
 import { CourseDataDto } from './dto/course-response.dto';
+import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
 
 @Injectable()
 export class CoursesService {
   constructor(
     @InjectModel(Course.name)
     private courseModel: Model<Course>,
+    private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
   ) {}
 
   async createCourse(createCourseDto: CreateCourseDto): Promise<CourseDataDto> {
-    return await this.courseModel.create(createCourseDto);
+    const createdInfo = await this.entityUtilsService.getCreatedInfo();
+    return await this.courseModel.create({
+      ...createCourseDto,
+      ...createdInfo,
+    });
   }
 
   async findAllCourses(): Promise<CourseDataDto[]> {
@@ -46,9 +52,10 @@ export class CoursesService {
     courseId: string,
     updateCourseDto: UpdateCourseDto,
   ): Promise<CourseDataDto> {
+    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
     const existingCourse = await this.courseModel.findByIdAndUpdate(
       courseId,
-      updateCourseDto,
+      { ...updateCourseDto, ...updatedInfo },
       { new: true },
     );
     if (!existingCourse)
@@ -60,8 +67,13 @@ export class CoursesService {
     collegeId: string,
     updateCourseDto: UpdateCourseDto,
   ) {
+    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
     const existingCourse = await this.courseModel
-      .updateOne({ collegeId }, updateCourseDto)
+      .updateOne(
+        { collegeId },
+        { ...updateCourseDto, ...updatedInfo },
+        { new: true },
+      )
       .lean()
       .exec();
     if (!existingCourse.acknowledged) {

@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { BaseEntity } from 'src/common/entity/base.entity';
 
 @Schema({ collection: 'colleges' }) // Define the schema for the 'colleges' collection in MongoDB
-export class College extends Document {
+export class College extends BaseEntity {
   // Extend Document to create a Mongoose document
 
   @Prop({ type: String, unique: true, required: true }) // Define a property named 'name' as a unique, required string

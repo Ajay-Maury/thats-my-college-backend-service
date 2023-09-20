@@ -5,6 +5,7 @@ import { College } from './entities/college.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CoursesService } from '../courses/courses.service';
+import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
 
 @Injectable()
 export class CollegeService {
@@ -13,10 +14,15 @@ export class CollegeService {
     @InjectModel(College.name) // Injects the College model using its name.
     private collegeModal: Model<College>, // Represents the College model instance.
     private readonly courseService: CoursesService, // Injects the CoursesService.
+    private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
   ) {}
 
   async createCollege(createCollegeDto: CreateCollegeDto) {
-    return await this.collegeModal.create(createCollegeDto);
+    const createdInfo = await this.entityUtilsService.getCreatedInfo();
+    return await this.collegeModal.create({
+      ...createCollegeDto,
+      ...createdInfo,
+    });
   }
 
   async findAllCollege() {
@@ -32,9 +38,10 @@ export class CollegeService {
   }
 
   async updateCollegeById(id: string, updateCollegeDto: UpdateCollegeDto) {
+    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
     const existingCollege = await this.collegeModal.findByIdAndUpdate(
       id,
-      updateCollegeDto,
+      { ...updateCollegeDto, ...updatedInfo },
       { new: true },
     );
     if (!existingCollege) {
