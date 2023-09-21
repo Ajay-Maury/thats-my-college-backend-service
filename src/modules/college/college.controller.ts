@@ -129,16 +129,15 @@ export class CollegeController {
     @Param('collegeId') collegeId: string,
   ): Promise<CollegeSingleResponseDto> {
     try {
-      const college = await this.collegeService.removeCollegeById(collegeId);
+      await this.collegeService.removeCollegeById(collegeId);
       return res.status(HttpStatus.OK).json({
         status: true,
-        data: college,
         message: `Successfully deleted college and courses with college id #${collegeId}`,
       });
     } catch (error) {
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ status: false, data: {}, message: error.message });
+        .json({ status: false, message: error.message });
     }
   }
 }

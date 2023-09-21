@@ -17,7 +17,7 @@ async function bootstrap() {
   app.enableCors();
 
   // Adding bunyan for logs
-  app.useLogger(new LoggerProvider().Get());
+  // app.useLogger(new LoggerProvider().Get());  // need to uncomment if needed
 
   // Set a global API prefix (e.g., '/api')
   app.setGlobalPrefix(CONSTANTS.GLOBAL_PREFIX);

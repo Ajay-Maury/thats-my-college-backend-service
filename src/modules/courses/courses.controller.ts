@@ -187,10 +187,9 @@ export class CoursesController {
     @Param('courseId') courseId: string,
   ): Promise<CourseResponseDto> {
     try {
-      const course = await this.coursesService.removeCourseByCourseId(courseId);
+      await this.coursesService.removeCourseByCourseId(courseId);
       return res.status(HttpStatus.OK).json({
         status: true,
-        data: course,
         message: `Successfully deleted course by course id #${courseId}`,
       });
     } catch (error) {
@@ -208,12 +207,9 @@ export class CoursesController {
     @Param('collegeId') collegeId: string,
   ): Promise<CourseResponseDto> {
     try {
-      const course = await this.coursesService.removeCourseByCollegeId(
-        collegeId,
-      );
+      await this.coursesService.removeCourseByCollegeId(collegeId);
       return res.status(HttpStatus.OK).json({
         status: true,
-        data: course,
         message: `Successfully deleted course by course id #${collegeId}`,
       });
     } catch (error) {
