@@ -6,6 +6,7 @@ import { DatabaseModule } from './common/database/database.module'; // Fixed the
 import { CollegeModule } from './modules/college/college.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { EntityUtilsModule } from './common/entity-utils/entityUtils.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EntityUtilsModule } from './common/entity-utils/entityUtils.module';
     DatabaseModule, // Import the DatabaseModule for database connectivity
     CollegeModule, // Import the CollegeModule for your college-related functionality
     CoursesModule,
+    UsersModule,
   ],
   controllers: [AppController], // Define controllers for handling HTTP requests
   providers: [AppService], // Define application-level services

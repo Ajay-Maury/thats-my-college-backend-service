@@ -67,20 +67,17 @@ export class CoursesService {
     collegeId: string,
     updateCourseDto: UpdateCourseDto,
   ) {
-    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
-    const existingCourse = await this.courseModel
-      .updateOne(
-        { collegeId },
-        { ...updateCourseDto, ...updatedInfo },
-        { new: true },
-      )
-      .lean()
-      .exec();
-    if (!existingCourse.acknowledged) {
+    const course = await this.courseModel.findOne({ collegeId });
+    if (!course)
       throw new NotFoundException(
         `Course with college id #${collegeId} not found`,
       );
-    }
+    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
+    const existingCourse = await this.courseModel.updateOne(
+      { collegeId },
+      { ...updateCourseDto, ...updatedInfo },
+      { new: true },
+    );
     return existingCourse;
   }
 
@@ -94,12 +91,11 @@ export class CoursesService {
   }
 
   async removeCourseByCollegeId(collegeId: string) {
-    const result = await this.courseModel.deleteOne({ collegeId }).exec();
-    if (result.deletedCount === 0) {
+    const course = await this.courseModel.findOne({ collegeId });
+    if (!course)
       throw new NotFoundException(
         `Course with college id #${collegeId} not found`,
       );
-    }
-    return result;
+    return await this.courseModel.deleteOne({ collegeId }).exec();
   }
 }
