@@ -17,8 +17,14 @@ export class CollegeService {
     private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
   ) {}
 
-  async createCollege(createCollegeDto: CreateCollegeDto) {
-    const createdInfo = await this.entityUtilsService.getCreatedInfo();
+  async createCollege(
+    createCollegeDto: CreateCollegeDto,
+    authorization: string,
+  ) {
+    const createdInfo = await this.entityUtilsService.getCreatedInfo(
+      authorization,
+    );
+
     return await this.collegeModal.create({
       ...createCollegeDto,
       ...createdInfo,
@@ -37,8 +43,15 @@ export class CollegeService {
     return college;
   }
 
-  async updateCollegeById(id: string, updateCollegeDto: UpdateCollegeDto) {
-    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
+  async updateCollegeById(
+    id: string,
+    updateCollegeDto: UpdateCollegeDto,
+    authorization: string,
+  ) {
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
+      authorization,
+    );
+
     const existingCollege = await this.collegeModal.findByIdAndUpdate(
       id,
       { ...updateCollegeDto, ...updatedInfo },
@@ -52,7 +65,10 @@ export class CollegeService {
 
   async removeCollegeById(id: string) {
     const college = await this.collegeModal.findByIdAndDelete(id);
-    const collegeCourse = await this.courseService.findCourseByCollegeId(id);
+    const collegeCourse = await this.courseService.findOneCourseByQuery({
+      collegeId: id,
+    });
+
     if (collegeCourse) {
       await this.courseService.removeCourseByCollegeId(id);
     }

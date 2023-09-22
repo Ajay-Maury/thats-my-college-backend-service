@@ -4,8 +4,5 @@ export class UserResponseDto {
   readonly firstName: string;
   readonly lastName: string;
   readonly _id: string;
-}
-
-export class UserAuthTokenResponse {
-  authToken: string;
+  readonly isDeleted: boolean;
 }

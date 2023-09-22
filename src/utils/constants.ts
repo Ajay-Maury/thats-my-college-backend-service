@@ -19,4 +19,7 @@ export const LOGGER = {
 
 export enum SWAGGER_TAGS {
   COLLEGE = 'college',
+  COURSES = 'courses',
+  USERS = 'users',
+  AUTH = 'auth',
 }

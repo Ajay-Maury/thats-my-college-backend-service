@@ -11,13 +11,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthenticateUserDto, CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import {
-  UserAuthTokenResponse,
-  UserResponseDto,
-} from './dto/user-response.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -74,39 +71,6 @@ export class UsersController {
       });
     } catch (error) {
       this.logger.error(`Failed to fetch all users`, error);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message, status: false });
-    }
-  }
-
-  @Post('/authenticate')
-  @ApiOperation({ summary: 'authenticate user' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: UserAuthTokenResponse })
-  async authenticateUser(
-    @Res() res,
-    @Body() authenticateUserDto: AuthenticateUserDto,
-  ) {
-    try {
-      this.logger.log(
-        `Initiated authenticating user with email: ${authenticateUserDto.email}`,
-      );
-      const token = await this.usersService.authenticateUser(
-        authenticateUserDto,
-      );
-      this.logger.log(
-        `Successfully authenticated user with email: ${authenticateUserDto.email}`,
-      );
-      return res.status(HttpStatus.CREATED).json({
-        message: `Successfully authenticated user with email: ${authenticateUserDto.email}`,
-        authToken: token,
-        status: true,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to authenticate user with email: ${authenticateUserDto.email}`,
-        error,
-      );
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: error.message, status: false });

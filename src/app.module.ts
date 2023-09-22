@@ -7,6 +7,7 @@ import { CollegeModule } from './modules/college/college.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { EntityUtilsModule } from './common/entity-utils/entityUtils.module';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UsersModule } from './modules/users/users.module';
       // Configure global environment variables
       isGlobal: true, // Make the configuration available globally
     }),
+    AuthModule,
     EntityUtilsModule, // Import the EntityUtilsModule for entity utils services
     DatabaseModule, // Import the DatabaseModule for database connectivity
     CollegeModule, // Import the CollegeModule for your college-related functionality

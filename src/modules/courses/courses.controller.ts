@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   Res,
+  Headers,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -30,9 +31,13 @@ export class CoursesController {
   public async createCollegeCourses(
     @Res() res,
     @Body() createCourseDto: CreateCourseDto,
+    @Headers('authorization') authorization: string,
   ): Promise<CourseResponseDto> {
     try {
-      const courses = await this.coursesService.createCourse(createCourseDto);
+      const courses = await this.coursesService.createCourse(
+        createCourseDto,
+        authorization,
+      );
       return res.status(HttpStatus.CREATED).json({
         status: true,
         data: courses,
@@ -136,11 +141,13 @@ export class CoursesController {
     @Res() res,
     @Param('courseId') courseId: string,
     @Body() updateCourseDto: UpdateCourseDto,
+    @Headers('authorization') authorization: string,
   ): Promise<CourseResponseDto> {
     try {
       const course = await this.coursesService.updateCourseByCourseId(
         courseId,
         updateCourseDto,
+        authorization,
       );
       return res.status(HttpStatus.OK).json({
         status: true,
@@ -160,12 +167,14 @@ export class CoursesController {
   public async updateCourseByCollegeId(
     @Res() res,
     @Param('collegeId') collegeId: string,
+    @Headers('authorization') authorization: string,
     @Body() updateCourseDto: UpdateCourseDto,
   ): Promise<CourseResponseDto> {
     try {
       const course = await this.coursesService.updateCourseByCollegeId(
         collegeId,
         updateCourseDto,
+        authorization,
       );
       return res.status(HttpStatus.OK).json({
         status: true,
