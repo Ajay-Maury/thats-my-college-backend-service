@@ -15,8 +15,13 @@ export class CoursesService {
     private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
   ) {}
 
-  async createCourse(createCourseDto: CreateCourseDto): Promise<CourseDataDto> {
-    const createdInfo = await this.entityUtilsService.getCreatedInfo();
+  async createCourse(
+    createCourseDto: CreateCourseDto,
+    authorization: string,
+  ): Promise<CourseDataDto> {
+    const createdInfo = await this.entityUtilsService.getCreatedInfo(
+      authorization,
+    );
     return await this.courseModel.create({
       ...createCourseDto,
       ...createdInfo,
@@ -43,6 +48,10 @@ export class CoursesService {
     return course;
   }
 
+  async findOneCourseByQuery(query: object): Promise<CourseDataDto> {
+    return await this.courseModel.findOne(query);
+  }
+
   async findCourseForAllColleges() {
     const courses = await this.courseModel.find().populate('collegeId');
     return courses;
@@ -51,8 +60,11 @@ export class CoursesService {
   async updateCourseByCourseId(
     courseId: string,
     updateCourseDto: UpdateCourseDto,
+    authorization: string,
   ): Promise<CourseDataDto> {
-    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
+      authorization,
+    );
     const existingCourse = await this.courseModel.findByIdAndUpdate(
       courseId,
       { ...updateCourseDto, ...updatedInfo },
@@ -66,13 +78,16 @@ export class CoursesService {
   async updateCourseByCollegeId(
     collegeId: string,
     updateCourseDto: UpdateCourseDto,
+    authorization: string,
   ) {
     const course = await this.courseModel.findOne({ collegeId });
     if (!course)
       throw new NotFoundException(
         `Course with college id #${collegeId} not found`,
       );
-    const updatedInfo = this.entityUtilsService.getUpdatedInfo();
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
+      authorization,
+    );
     const existingCourse = await this.courseModel.updateOne(
       { collegeId },
       { ...updateCourseDto, ...updatedInfo },

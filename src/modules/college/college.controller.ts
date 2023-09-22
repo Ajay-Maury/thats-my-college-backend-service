@@ -9,22 +9,38 @@ import {
   HttpStatus,
   Res,
   Logger,
+  UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { CollegeService } from './college.service';
 import { CreateCollegeDto } from './dto/create-college.dto';
 import { UpdateCollegeDto } from './dto/update-college.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'; // Import Swagger decorators.
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'; // Import Swagger decorators.
 import {
   CollegeResponseDto,
   CollegeSingleResponseDto,
 } from './dto/college-response.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
 
 @Controller('college') // Defines the base route for this controller.
 @ApiTags('college') // Adds Swagger tags for documentation.
 export class CollegeController {
+  // Initialize a logger instance for logging messages related to this controller.
+  // Logger for the CollegeController class.
   private readonly logger = new Logger(CollegeService.name);
 
-  constructor(private readonly collegeService: CollegeService) {}
+  constructor(
+    // Inject the CollegeService for handling college-related operations.
+    private readonly collegeService: CollegeService,
+    // Inject the EntityUtilsService for handling common entity-related utilities.
+    private readonly entityUtilsService: EntityUtilsService,
+  ) {}
 
   // Create a new college.
   @Post()
@@ -33,23 +49,35 @@ export class CollegeController {
   public async createNewCollege(
     @Res() res,
     @Body() createCollegeDto: CreateCollegeDto,
+    @Headers('authorization') authorization: string,
   ): Promise<CollegeResponseDto> {
     try {
+      // Log that the process of creating a new college has started.
       this.logger.log(`Initiated creating new college`);
+
+      // Call the collegeService to create a new college with provided data and authorization.
       const colleges = await this.collegeService.createCollege(
         createCollegeDto,
+        authorization,
       );
+
+      // Log that the college creation was successful.
       this.logger.log(`Successfully created new college`);
+
+      // Return a success response with the created college data.
       return res.status(HttpStatus.OK).json({
         status: true,
         data: colleges,
         message: `Successfully created college`,
       });
     } catch (error) {
+      // Log an error message if there was a failure in creating the college.
       this.logger.error(`Failed to create new college`, error);
+
+      // Return an error response with a detailed error message.
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ status: false, data: [], message: error.message });
+        .json({ status: false, message: error.message });
     }
   }
 
@@ -96,17 +124,21 @@ export class CollegeController {
 
   // Update a college by college ID.
   @Patch(':collegeId')
+  @UseGuards(JwtAuthGuard) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Update college by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async updateOneById(
     @Res() res,
     @Param('collegeId') collegeId: string,
     @Body() updateCollegeDto: UpdateCollegeDto,
+    @Headers('authorization') authorization: string,
   ): Promise<CollegeSingleResponseDto> {
     try {
       const college = await this.collegeService.updateCollegeById(
         collegeId,
         updateCollegeDto,
+        authorization,
       );
       return res.status(HttpStatus.OK).json({
         status: true,
@@ -122,6 +154,8 @@ export class CollegeController {
 
   // Delete a college and its courses by college ID.
   @Delete(':collegeId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Delete college and courses by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async deleteOneById(
