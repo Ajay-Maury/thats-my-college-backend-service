@@ -8,7 +8,6 @@ import {
   Delete,
   HttpStatus,
   Res,
-  Headers,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -19,6 +18,7 @@ import {
   CourseResponseArrayDto,
   CourseResponseDto,
 } from './dto/course-response.dto';
+import { GetAuthToken } from 'src/common/decorators/getAuthToken.decorator';
 
 @Controller('courses')
 @ApiTags('courses')
@@ -31,7 +31,7 @@ export class CoursesController {
   public async createCollegeCourses(
     @Res() res,
     @Body() createCourseDto: CreateCourseDto,
-    @Headers('authorization') authorization: string,
+    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CourseResponseDto> {
     try {
       const courses = await this.coursesService.createCourse(
@@ -141,7 +141,7 @@ export class CoursesController {
     @Res() res,
     @Param('courseId') courseId: string,
     @Body() updateCourseDto: UpdateCourseDto,
-    @Headers('authorization') authorization: string,
+    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CourseResponseDto> {
     try {
       const course = await this.coursesService.updateCourseByCourseId(
@@ -167,7 +167,8 @@ export class CoursesController {
   public async updateCourseByCollegeId(
     @Res() res,
     @Param('collegeId') collegeId: string,
-    @Headers('authorization') authorization: string,
+    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
+
     @Body() updateCourseDto: UpdateCourseDto,
   ): Promise<CourseResponseDto> {
     try {

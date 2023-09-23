@@ -4,7 +4,7 @@ import {
   ICreatedInfo,
   IDeletedInfo,
   IUpdatedInfo,
-} from './entutyUtils.interface';
+} from './entityUtils.interface';
 import { UserResponseDto } from 'src/modules/users/dto/user-response.dto';
 
 @Injectable()
@@ -12,23 +12,9 @@ export class EntityUtilsService {
   constructor(private readonly authService: AuthService) {} // Inject the AuthService to handle user authentication.
 
   // Retrieve the current user's information based on the provided authorization token.
-  public async getCurrentUser(authorization: string): Promise<UserResponseDto> {
-    try {
-      const token = authorization.split(' ')[1];
-
-      // Call AuthService to get user details from the provided token.
-      return await this.authService.getUserFromToken(token);
-    } catch (error) {
-      // If an error occurs or authorization is invalid, return default values.
-      return {
-        _id: 'NA',
-        email: '',
-        phone: '"',
-        firstName: '',
-        lastName: '',
-        isDeleted: true,
-      };
-    }
+  public async getCurrentUser(token: string): Promise<UserResponseDto> {
+    // Call AuthService to get user details from the provided token.
+    return await this.authService.getUserFromToken(token);
   }
 
   // Create and return information about when and by whom an entity was created.
