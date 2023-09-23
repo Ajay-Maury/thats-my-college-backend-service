@@ -10,7 +10,6 @@ import {
   Res,
   Logger,
   UseGuards,
-  Headers,
 } from '@nestjs/common';
 import { CollegeService } from './college.service';
 import { CreateCollegeDto } from './dto/create-college.dto';
@@ -27,6 +26,7 @@ import {
 } from './dto/college-response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
+import { GetAuthToken } from 'src/common/decorators/getAuthToken.decorator';
 
 @Controller('college') // Defines the base route for this controller.
 @ApiTags('college') // Adds Swagger tags for documentation.
@@ -49,7 +49,7 @@ export class CollegeController {
   public async createNewCollege(
     @Res() res,
     @Body() createCollegeDto: CreateCollegeDto,
-    @Headers('authorization') authorization: string,
+    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CollegeResponseDto> {
     try {
       // Log that the process of creating a new college has started.
@@ -132,7 +132,7 @@ export class CollegeController {
     @Res() res,
     @Param('collegeId') collegeId: string,
     @Body() updateCollegeDto: UpdateCollegeDto,
-    @Headers('authorization') authorization: string,
+    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CollegeSingleResponseDto> {
     try {
       const college = await this.collegeService.updateCollegeById(
@@ -154,8 +154,6 @@ export class CollegeController {
 
   // Delete a college and its courses by college ID.
   @Delete(':collegeId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Delete college and courses by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async deleteOneById(
