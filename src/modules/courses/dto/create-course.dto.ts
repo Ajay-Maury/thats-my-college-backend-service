@@ -4,9 +4,11 @@ import {
   IsArray,
   IsMongoId,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { CollegeFilterDto } from 'src/modules/college/dto/create-college.dto';
 
 export class CourseDto {
   @IsNotEmpty()
@@ -45,4 +47,10 @@ export class CreateCourseDto {
   @ValidateNested({ each: true }) // Use ValidateNested decorator to validate each item in the array
   @Type(() => CourseDto) // Specify the type for validation
   courses: CourseDto[];
+}
+
+export class CourseFilterDto extends CollegeFilterDto {
+  @IsOptional()
+  @IsString()
+  courseName?: string;
 }

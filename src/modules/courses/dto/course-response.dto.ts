@@ -10,9 +10,17 @@ export class Course {
 }
 
 export class CourseDataWithCollegeDetailsDto {
-  readonly _id: string;
-  readonly collegeId: CollegeResponseData;
+  readonly college: CollegeResponseData;
   readonly courses: Course[];
+}
+
+export class CourseDataWithCollegeDetailsResponseDto {
+  readonly status: boolean;
+  readonly data: {
+    courses: CourseDataWithCollegeDetailsDto;
+    totalDocuments: number;
+  };
+  message: string;
 }
 
 export class CourseDataDto {

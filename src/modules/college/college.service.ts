@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCollegeDto } from './dto/create-college.dto';
+import { CreateCollegeDto, CollegeFilterDto } from './dto/create-college.dto';
 import { UpdateCollegeDto } from './dto/update-college.dto';
 import { College } from './entities/college.entity';
 import { Model } from 'mongoose';
@@ -31,8 +31,56 @@ export class CollegeService {
     });
   }
 
-  async findAllCollege() {
-    return await this.collegeModal.find();
+  async findAllCollege(filter: CollegeFilterDto) {
+    const {
+      city,
+      collegeType,
+      featured,
+      rating,
+      state,
+      limit = 10,
+      page = 1,
+    } = filter;
+    // Create an empty query object
+    const query: any = {};
+
+    // Add filters to the query object if they are not empty
+    if (city) {
+      query.city = city;
+    }
+
+    if (collegeType) {
+      query.collegeType = collegeType;
+    }
+
+    if (featured) {
+      query.featured = featured === 'true' ? true : false;
+    }
+
+    if (rating) {
+      query.rating = { $gte: rating };
+    }
+
+    if (state) {
+      query.state = state;
+    }
+
+    // Calculate the number of documents to skip based on the 'page' and 'limit'
+    const skip = (page - 1) * limit;
+
+    const colleges = await this.collegeModal
+      .find(query)
+      .limit(limit)
+      .skip(skip)
+      .exec();
+
+    // Calculate the total number of pages
+    const totalDocuments = await this.collegeModal.countDocuments(query).exec();
+
+    return {
+      colleges,
+      totalDocuments,
+    };
   }
 
   async findOneCollege(id: string) {

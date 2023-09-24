@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -70,6 +71,36 @@ export class CreateCollegeDto {
   rating: number;
 
   @IsBoolean()
-  @IsNotEmpty()
-  featured: boolean;
+  @IsOptional()
+  featured?: boolean = false;
+}
+
+export class CollegeFilterDto {
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  state?: string;
+
+  @IsOptional()
+  @IsString()
+  collegeType?: string;
+
+  @IsOptional()
+  @IsString()
+  rating?: string;
+
+  @IsOptional()
+  @IsString()
+  featured?: string = 'false';
+
+  @IsOptional()
+  @IsNumber()
+  limit?: number = 10;
+
+  @IsOptional()
+  @IsNumber()
+  page?: number = 1;
 }

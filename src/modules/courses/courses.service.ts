@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCourseDto } from './dto/create-course.dto';
+import { CourseFilterDto, CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Course } from './entities/course.entity';
-import { Model } from 'mongoose';
+import { Model, PipelineStage } from 'mongoose';
 import { CourseDataDto } from './dto/course-response.dto';
 import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
 
@@ -52,9 +52,103 @@ export class CoursesService {
     return await this.courseModel.findOne(query);
   }
 
-  async findCourseForAllColleges() {
-    const courses = await this.courseModel.find().populate('collegeId');
-    return courses;
+  async findCourseForAllColleges(filter: CourseFilterDto) {
+    const {
+      city,
+      collegeType,
+      courseName,
+      featured,
+      rating,
+      state,
+      limit = 10,
+      page = 1,
+    } = filter;
+
+    // Build the aggregation pipeline
+    const pipeline: PipelineStage[] = [];
+
+    // Match stage for courseName if provided
+    if (courseName) {
+      pipeline.push({
+        $match: { 'courses.courseName': courseName },
+      });
+    }
+
+    pipeline.push({
+      $addFields: {
+        collegeObjectId: {
+          $convert: {
+            input: '$collegeId',
+            to: 'objectId',
+            onError: 'null',
+          },
+        },
+      },
+    });
+
+    // Lookup colleges
+    pipeline.push({
+      $lookup: {
+        from: 'colleges',
+        localField: 'collegeObjectId',
+        foreignField: '_id',
+        as: 'college',
+      },
+    });
+
+    // Unwind the college array
+    pipeline.push({
+      $unwind: {
+        path: '$college',
+        preserveNullAndEmptyArrays: true,
+      },
+    });
+
+    // Conditional match stage for college filters
+    if (city || collegeType || featured || rating || state) {
+      const collegeFilters = {};
+
+      if (city) {
+        collegeFilters['college.city'] = city;
+      }
+
+      if (collegeType) {
+        collegeFilters['college.collegeType'] = collegeType;
+      }
+
+      if (featured) {
+        collegeFilters['college.featured'] = featured === 'true' ? true : false;
+      }
+
+      if (rating) {
+        collegeFilters['college.rating'] = { $gte: rating };
+      }
+
+      if (state) {
+        collegeFilters['college.state'] = state;
+      }
+
+      pipeline.push({
+        $match: collegeFilters,
+      });
+    }
+
+    const skip = (page - 1) * limit;
+
+    pipeline.push({
+      $facet: {
+        courses: [{ $skip: skip }, { $limit: limit }],
+        totalDocuments: [{ $count: 'totalDocuments' }],
+      },
+    });
+
+    // Execute the aggregation pipeline
+    const response = await this.courseModel.aggregate(pipeline).exec();
+
+    return {
+      courses: response[0]?.courses || [],
+      totalDocuments: response[0]?.totalDocuments[0]?.totalDocuments || 0,
+    };
   }
 
   async updateCourseByCourseId(

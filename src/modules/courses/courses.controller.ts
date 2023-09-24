@@ -10,9 +10,10 @@ import {
   HttpStatus,
   UseGuards,
   Res,
+  Query,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
-import { CreateCourseDto } from './dto/create-course.dto';
+import { CourseFilterDto, CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
@@ -22,7 +23,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
-  CourseDataWithCollegeDetailsDto,
+  CourseDataWithCollegeDetailsResponseDto,
   CourseResponseArrayDto,
   CourseResponseDto,
 } from './dto/course-response.dto';
@@ -145,13 +146,17 @@ export class CoursesController {
 
   @Get('get-all/college-details')
   @ApiOperation({ summary: 'get all courses with college details' })
-  @ApiResponse({ status: HttpStatus.OK, type: CourseDataWithCollegeDetailsDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: CourseDataWithCollegeDetailsResponseDto,
+  })
   public async getCourseForAllColleges(
     @Res() res,
-  ): Promise<CourseDataWithCollegeDetailsDto> {
+    @Query() filter: CourseFilterDto,
+  ): Promise<CourseDataWithCollegeDetailsResponseDto> {
     try {
       this.logger.log(`Initiated get all courses with college details`);
-      const course = await this.coursesService.findCourseForAllColleges();
+      const course = await this.coursesService.findCourseForAllColleges(filter);
 
       this.logger.log(`Successfully get all courses with college details`);
       return res.status(HttpStatus.OK).json({
