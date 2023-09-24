@@ -44,6 +44,8 @@ export class CollegeController {
 
   // Create a new college.
   @Post()
+  @UseGuards(JwtAuthGuard) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Create college' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.CREATED, type: CollegeResponseDto }) // Describes the response for Swagger.
   public async createNewCollege(
@@ -87,13 +89,19 @@ export class CollegeController {
   @ApiResponse({ status: HttpStatus.OK, type: CollegeResponseDto }) // Describes the response for Swagger.
   public async getAllCollege(@Res() res): Promise<CollegeResponseDto> {
     try {
+      this.logger.log(`Initiated geting all college`);
       const colleges = await this.collegeService.findAllCollege();
+
+      // Log that the getting all colleges successfully.
+      this.logger.log(`Successfully getting all college`);
+
       return res.status(HttpStatus.OK).json({
         status: true,
         data: colleges,
         message: `Successfully fetched all colleges`,
       });
     } catch (error) {
+      this.logger.error(`Failed to get all college`, error);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: false, data: [], message: error.message });
@@ -109,13 +117,19 @@ export class CollegeController {
     @Param('collegeId') collegeId: string,
   ): Promise<CollegeSingleResponseDto> {
     try {
+      this.logger.log(`Initiated getting a college by Id`);
       const college = await this.collegeService.findOneCollege(collegeId);
+
+      // Log that the find a college.
+      this.logger.log(`Successfully get a college`);
+
       return res.status(HttpStatus.OK).json({
         status: true,
         data: college,
         message: `Successfully fetched college with id #${collegeId}`,
       });
     } catch (error) {
+      this.logger.error(`Failed to get a college`, error);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: false, data: {}, message: error.message });
@@ -135,17 +149,23 @@ export class CollegeController {
     @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CollegeSingleResponseDto> {
     try {
+      this.logger.log(`Initiated update a college by Id`);
       const college = await this.collegeService.updateCollegeById(
         collegeId,
         updateCollegeDto,
         authorization,
       );
+
+      // Log that the college updated was successful.
+      this.logger.log(`Successfully updated college`);
+
       return res.status(HttpStatus.OK).json({
         status: true,
         data: college,
         message: `Successfully updated college with id #${collegeId}`,
       });
     } catch (error) {
+      this.logger.error(`Failed to update a college`, error);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: false, data: {}, message: error.message });
@@ -154,6 +174,8 @@ export class CollegeController {
 
   // Delete a college and its courses by college ID.
   @Delete(':collegeId')
+  @UseGuards(JwtAuthGuard) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Delete college and courses by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async deleteOneById(
@@ -161,12 +183,18 @@ export class CollegeController {
     @Param('collegeId') collegeId: string,
   ): Promise<CollegeSingleResponseDto> {
     try {
+      this.logger.log(`Initiated delete a college by Id`);
       await this.collegeService.removeCollegeById(collegeId);
+
+      // Log that the college deleted successful.
+      this.logger.log(`Successfully deleted college`);
+
       return res.status(HttpStatus.OK).json({
         status: true,
         message: `Successfully deleted college and courses with college id #${collegeId}`,
       });
     } catch (error) {
+      this.logger.error(`Failed to delete a college`, error);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: false, message: error.message });
