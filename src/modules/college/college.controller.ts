@@ -10,9 +10,10 @@ import {
   Res,
   Logger,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CollegeService } from './college.service';
-import { CreateCollegeDto } from './dto/create-college.dto';
+import { CreateCollegeDto, CollegeFilterDto } from './dto/create-college.dto';
 import { UpdateCollegeDto } from './dto/update-college.dto';
 import {
   ApiBearerAuth,
@@ -58,7 +59,7 @@ export class CollegeController {
       this.logger.log(`Initiated creating new college`);
 
       // Call the collegeService to create a new college with provided data and authorization.
-      const colleges = await this.collegeService.createCollege(
+      const college = await this.collegeService.createCollege(
         createCollegeDto,
         authorization,
       );
@@ -69,8 +70,8 @@ export class CollegeController {
       // Return a success response with the created college data.
       return res.status(HttpStatus.OK).json({
         status: true,
-        data: colleges,
-        message: `Successfully created college`,
+        data: college,
+        message: `Successfully created college with id #${college._id}`,
       });
     } catch (error) {
       // Log an error message if there was a failure in creating the college.
@@ -87,10 +88,14 @@ export class CollegeController {
   @Get()
   @ApiOperation({ summary: 'Get all colleges' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeResponseDto }) // Describes the response for Swagger.
-  public async getAllCollege(@Res() res): Promise<CollegeResponseDto> {
+  public async getAllCollege(
+    @Res() res,
+    @Query() filter: CollegeFilterDto,
+  ): Promise<CollegeResponseDto> {
     try {
-      this.logger.log(`Initiated geting all college`);
-      const colleges = await this.collegeService.findAllCollege();
+      this.logger.log(`Initiated getting all college`);
+
+      const colleges = await this.collegeService.findAllCollege(filter);
 
       // Log that the getting all colleges successfully.
       this.logger.log(`Successfully getting all college`);

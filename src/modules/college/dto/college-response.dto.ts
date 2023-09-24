@@ -24,6 +24,6 @@ export class CollegeSingleResponseDto {
 
 export class CollegeResponseDto {
   readonly status: boolean;
-  data: CollegeResponseData[];
+  data: { colleges: CollegeResponseData[]; totalDocuments: number };
   message: string;
 }
