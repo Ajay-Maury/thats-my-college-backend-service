@@ -25,7 +25,7 @@ export class CourseDataWithCollegeDetailsResponseDto {
 
 export class CourseDataDto {
   readonly _id: string;
-  readonly collegeId: string;
+  readonly collegeId: CollegeResponseData;
   readonly courses: Course[];
 }
 

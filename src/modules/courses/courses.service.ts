@@ -15,10 +15,7 @@ export class CoursesService {
     private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
   ) {}
 
-  async createCourse(
-    createCourseDto: CreateCourseDto,
-    authorization: string,
-  ): Promise<CourseDataDto> {
+  async createCourse(createCourseDto: CreateCourseDto, authorization: string) {
     const createdInfo = await this.entityUtilsService.getCreatedInfo(
       authorization,
     );
@@ -32,15 +29,17 @@ export class CoursesService {
     return await this.courseModel.find();
   }
 
-  async findOneCourseByCourseId(courseId: string): Promise<CourseDataDto> {
+  async findOneCourseByCourseId(courseId: string) {
     const course = await this.courseModel.findById(courseId);
     if (!course)
       throw new NotFoundException(`Course with id #${courseId} not found`);
     return course;
   }
 
-  async findCourseByCollegeId(collegeId: string): Promise<CourseDataDto> {
-    const course = await this.courseModel.findOne({ collegeId });
+  async findCourseByCollegeId(collegeId: string) {
+    const course = (await this.courseModel.findOne({ collegeId })).populate(
+      'collegeId',
+    );
     if (!course)
       throw new NotFoundException(
         `Course with college id #${collegeId} not found`,
@@ -155,7 +154,7 @@ export class CoursesService {
     courseId: string,
     updateCourseDto: UpdateCourseDto,
     authorization: string,
-  ): Promise<CourseDataDto> {
+  ) {
     const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
       authorization,
     );
@@ -190,7 +189,7 @@ export class CoursesService {
     return existingCourse;
   }
 
-  async removeCourseByCourseId(courseId: string): Promise<CourseDataDto> {
+  async removeCourseByCourseId(courseId: string) {
     const course = await this.courseModel.findByIdAndDelete(courseId);
     if (!course)
       throw new NotFoundException(
