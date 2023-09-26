@@ -94,7 +94,7 @@ export class CollegeFilterDto {
 
   @IsOptional()
   @IsString()
-  featured?: string = 'false';
+  featured?: string;
 
   @IsOptional()
   @IsNumber()
