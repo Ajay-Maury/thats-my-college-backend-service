@@ -53,6 +53,7 @@ export class CoursesService {
 
   async findCourseForAllColleges(filter: CourseFilterDto) {
     const {
+      collegeName,
       city,
       collegeType,
       courseName,
@@ -104,8 +105,16 @@ export class CoursesService {
     });
 
     // Conditional match stage for college filters
-    if (city || collegeType || featured || rating || state) {
+    if (city || collegeType || featured || rating || state || collegeName) {
       const collegeFilters = {};
+
+      // Add the name regex search condition if collegeName is not empty
+      if (collegeName) {
+        // Trim the collegeName and apply case-insensitive regex search
+        collegeFilters['college.name'] = {
+          $regex: new RegExp(collegeName.trim(), 'i'),
+        };
+      }
 
       if (city) {
         collegeFilters['college.city'] = city;

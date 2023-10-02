@@ -82,6 +82,10 @@ export class CollegeFilterDto {
 
   @IsOptional()
   @IsString()
+  collegeName?: string;
+
+  @IsOptional()
+  @IsString()
   state?: string;
 
   @IsOptional()

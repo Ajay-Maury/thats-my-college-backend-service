@@ -33,6 +33,7 @@ export class CollegeService {
 
   async findAllCollege(filter: CollegeFilterDto) {
     const {
+      collegeName,
       city,
       collegeType,
       featured,
@@ -63,6 +64,11 @@ export class CollegeService {
 
     if (state) {
       query.state = state;
+    }
+
+    // Add the name regex search condition if collegeName is not empty
+    if (collegeName) {
+      query.name = { $regex: new RegExp(collegeName, 'i') }; // 'i' flag for case-insensitive search
     }
 
     // Calculate the number of documents to skip based on the 'page' and 'limit'
