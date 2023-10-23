@@ -187,15 +187,22 @@ export class CoursesService {
       throw new NotFoundException(
         `Course with college id #${collegeId} not found`,
       );
+
     const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
       authorization,
     );
-    const existingCourse = await this.courseModel.updateOne(
+
+    const existingCourse = await this.courseModel.findOneAndUpdate(
       { collegeId },
       { ...updateCourseDto, ...updatedInfo },
-      { new: true },
+      {
+        new: true,
+        upsert: true,
+        includeResultMetadata: true, // Return the raw result from the MongoDB driver
+      },
     );
-    return existingCourse;
+
+    return existingCourse.value;
   }
 
   async removeCourseByCourseId(courseId: string) {

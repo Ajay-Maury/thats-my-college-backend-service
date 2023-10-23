@@ -187,21 +187,24 @@ export class CoursesController {
     @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CourseResponseDto> {
     try {
-      this.logger.log(`Initiated updating courses by course ID`);
+      this.logger.log(`Initiated updating courses by course Id #${courseId}`);
       const course = await this.coursesService.updateCourseByCourseId(
         courseId,
         updateCourseDto,
         authorization,
       );
 
-      this.logger.log(`Successfully Updated course by course id`);
+      this.logger.log(`Successfully Updated course by course id #${courseId}`);
       return res.status(HttpStatus.OK).json({
         status: true,
         data: course,
         message: `Successfully Updated course by course id #${courseId}`,
       });
     } catch (error) {
-      this.logger.error(`Failed to update course by course Id`, error);
+      this.logger.error(
+        `Failed to update course by course Id #${courseId}`,
+        error,
+      );
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: false, data: {}, message: error.message });
@@ -221,21 +224,26 @@ export class CoursesController {
     @Body() updateCourseDto: UpdateCourseDto,
   ): Promise<CourseResponseDto> {
     try {
-      this.logger.log(`Initiated Update course by college id`);
+      this.logger.log(`Initiated Update course by college id #${collegeId}`);
       const course = await this.coursesService.updateCourseByCollegeId(
         collegeId,
         updateCourseDto,
         authorization,
       );
 
-      this.logger.log(`Successfully Updated course by college id`);
+      this.logger.log(
+        `Successfully Updated course by college id #${collegeId}`,
+      );
       return res.status(HttpStatus.OK).json({
         status: true,
         data: course,
         message: `Successfully Updated course by college id #${collegeId}`,
       });
     } catch (error) {
-      this.logger.error(`Failed to update course by college Id`, error);
+      this.logger.error(
+        `Failed to update course by college Id #${collegeId}`,
+        error,
+      );
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: false, data: {}, message: error.message });
