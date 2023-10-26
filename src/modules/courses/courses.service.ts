@@ -70,7 +70,11 @@ export class CoursesService {
     // Match stage for courseName if provided
     if (courseName) {
       pipeline.push({
-        $match: { 'courses.courseName': courseName },
+        $match: {
+          'courses.courseName': {
+            $regex: new RegExp(courseName, 'i'),
+          },
+        },
       });
     }
 
@@ -117,11 +121,15 @@ export class CoursesService {
       }
 
       if (city) {
-        collegeFilters['college.city'] = city;
+        collegeFilters['college.city'] = {
+          $regex: new RegExp(city, 'i'),
+        };
       }
 
       if (collegeType) {
-        collegeFilters['college.collegeType'] = collegeType;
+        collegeFilters['college.collegeType'] = {
+          $regex: new RegExp(collegeType, 'i'),
+        };
       }
 
       if (featured) {
@@ -133,7 +141,9 @@ export class CoursesService {
       }
 
       if (state) {
-        collegeFilters['college.state'] = state;
+        collegeFilters['college.state'] = {
+          $regex: new RegExp(state, 'i'),
+        };
       }
 
       pipeline.push({

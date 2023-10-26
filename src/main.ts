@@ -77,7 +77,16 @@ async function bootstrap() {
   });
 
   // Start the application and listen on the specified port (fallback to 4000 if not provided)
-  await app.listen(configService.get('PORT') || 4000);
+  const port = configService.get('PORT') || 4000;
+  await app.listen(port, () => {
+    console.log(
+      `
+             🔌 REST API ready at http://localhost:${port}/${CONSTANTS.GLOBAL_PREFIX}
+
+             💻 Swagger UI ready at at http://localhost:${port}/${SWAGGER_CONSTANTS.PATH}
+      `,
+    );
+  });
 }
 
 // Bootstrap the Nest.js application
