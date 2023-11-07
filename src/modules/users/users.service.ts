@@ -4,13 +4,13 @@ import {
   NotFoundException,
   forwardRef,
 } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { Model } from 'mongoose';
 import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
+import { CreateUserDto, CreateUserFormDto } from './dto/create-user.dto';
+import { UpdateUserDto, UpdateUserRoleDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -25,7 +25,7 @@ export class UsersService {
   ) {}
 
   // Create a new user with password hashing
-  public async createUser(createUserDto: CreateUserDto) {
+  public async createUser(createUserDto: CreateUserFormDto) {
     // Hash the password before saving it to the database
     const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
 
@@ -86,17 +86,13 @@ export class UsersService {
     const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
       { ...updateUserDto, ...updatedInfo },
-      { new: true },
+      { new: true, select: '-password' },
     );
 
     if (!updatedUser)
       throw new NotFoundException(`User with user id #${id} not found`);
 
-    // Omit the password field from the response
-    const userResponse = updatedUser.toObject();
-    delete userResponse.password;
-
-    return userResponse;
+    return updatedUser;
   }
 
   // Remove a user by their ID
@@ -108,5 +104,34 @@ export class UsersService {
 
     // Delete the user from the database
     return await this.userModel.findByIdAndDelete(id);
+  }
+
+  public async oauthLogin(userDto: CreateUserDto) {
+    return await this.userModel.findOneAndUpdate(
+      { email: userDto.email },
+      userDto,
+      {
+        new: true,
+        upsert: true, // Make this update into an upsert
+      },
+    );
+  }
+
+  public async updateUserRole(updateUserRoleDto: UpdateUserRoleDto) {
+    const user = await this.userModel.findOneAndUpdate(
+      { email: updateUserRoleDto.email },
+      updateUserRoleDto,
+      {
+        new: true,
+        select: '-password',
+      },
+    );
+
+    if (!user)
+      throw new NotFoundException(
+        `user with email:- ${updateUserRoleDto.email} not found`,
+      );
+
+    return user;
   }
 }

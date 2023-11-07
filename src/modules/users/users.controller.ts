@@ -1,20 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Logger,
-  Res,
+  Get,
   HttpStatus,
+  Logger,
+  Param,
+  Patch,
+  Post,
+  Res,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto, CreateUserFormDto } from './dto/create-user.dto';
+import { UpdateUserDto, UpdateUserRoleDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 @ApiTags('users')
@@ -28,27 +28,60 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponseDto })
   async createUser(
     @Res() res,
-    @Body() createUserDto: CreateUserDto,
+    @Body() createUserFormDto: CreateUserFormDto,
   ): Promise<UserResponseDto> {
     try {
       this.logger.log(
-        `Initiated create new user with email: ${createUserDto.email}`,
+        `Initiated create new user with email: ${createUserFormDto.email}`,
       );
-      const user = await this.usersService.createUser(createUserDto);
+      const user = await this.usersService.createUser(createUserFormDto);
 
       this.logger.log(
-        `Successfully create new user with email: ${createUserDto.email}`,
+        `Successfully create new user with email: ${createUserFormDto.email}`,
       );
       return res.status(HttpStatus.CREATED).json({
-        message: `Successfully created new user with user id #${user}`,
+        message: `Successfully created new user with user id #${user.id}`,
         data: user,
         status: true,
       });
     } catch (error) {
-      this.logger.error,
-        error({
-          message: `Failed to create new user with email: ${createUserDto.email}`,
-        });
+      this.logger.error(
+        `Failed to create new user with email: ${createUserFormDto.email}`,
+        error,
+      );
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message,
+        status: false,
+      });
+    }
+  }
+
+  @Post('oauth-login')
+  @ApiOperation({ summary: 'create or update user by oauth login' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: UserResponseDto })
+  async oauthLogin(
+    @Res() res,
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserResponseDto> {
+    try {
+      this.logger.log(
+        `Initiated creating/updating user with email: ${createUserDto.email}`,
+      );
+      const user = await this.usersService.oauthLogin(createUserDto);
+
+      this.logger.log(
+        `Successfully created/updated user with email: ${createUserDto.email}`,
+      );
+      return res.status(HttpStatus.CREATED).json({
+        message: `Successfully created/updated new user with email:- ${user.email}`,
+        data: user,
+        status: true,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to create/update new user with email: ${createUserDto.email}`,
+        error,
+      );
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
         status: false,
@@ -120,6 +153,39 @@ export class UsersController {
       });
     } catch (error) {
       this.logger.error(`Failed to update user by user id #${userId}`, error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message, status: false });
+    }
+  }
+
+  @Patch('role/update')
+  @ApiOperation({ summary: 'update user role by user email' })
+  @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
+  async updateUserRole(
+    @Res() res,
+    @Body() updateUserRoleDto: UpdateUserRoleDto,
+  ) {
+    const { email } = updateUserRoleDto;
+    console.log('email:', email);
+    try {
+      this.logger.log(`Initiated updating user role by user email:- ${email}`);
+      const updatedUser = await this.usersService.updateUserRole(
+        updateUserRoleDto,
+      );
+      this.logger.log(
+        `Successfully updated user role by user email:- ${email}`,
+      );
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully updated user role by user email:- ${email}`,
+        status: true,
+        data: updatedUser,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to update user role by user email:- ${email}`,
+        error,
+      );
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: error.message, status: false });
