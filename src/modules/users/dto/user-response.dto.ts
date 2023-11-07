@@ -1,3 +1,5 @@
+import { UserRoleEnum } from '../enums/users.enums';
+
 export class UserResponseDto {
   readonly email: string;
   readonly phone: string;
@@ -5,4 +7,5 @@ export class UserResponseDto {
   readonly lastName: string;
   readonly _id: string;
   readonly isDeleted: boolean;
+  readonly role: UserRoleEnum;
 }
