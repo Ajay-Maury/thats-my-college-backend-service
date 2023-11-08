@@ -16,7 +16,7 @@ export class AdmissionApplicationService {
     private admissionApplicationModule = Model<AdmissionApplication>,
     // @Inject(forwardRef(() => EntityUtilsService))
     private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
-  ) { }
+  ) {}
 
   // Helper method to check if the provided ID exists in the specified collection
   private async checkIfIdExists(

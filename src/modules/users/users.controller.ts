@@ -9,8 +9,17 @@ import {
   Patch,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UserRoleEnum } from 'src/utils/enums/users.enums';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../auth/guards/role.gaurd';
 import {
   CreateUserDto,
   CreateUserFormDto,
@@ -158,6 +167,11 @@ export class UsersController {
   }
 
   @Patch(':userId')
+  @UseGuards(
+    JwtAuthGuard,
+    new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.USER]),
+  )
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'update user by user id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async updateUserById(
@@ -186,6 +200,8 @@ export class UsersController {
   }
 
   @Patch('role/update')
+  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.SUPER_ADMIN]))
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'update user role by user email' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async updateUserRole(
@@ -219,6 +235,8 @@ export class UsersController {
   }
 
   @Delete(':userId')
+  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'delete user by user id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async removeUserById(@Res() res, @Param('userId') userId: string) {

@@ -17,4 +17,4 @@ import {
   providers: [AdmissionApplicationService],
   exports: [AdmissionApplicationService],
 })
-export class AdmissionApplicationModule { }
+export class AdmissionApplicationModule {}

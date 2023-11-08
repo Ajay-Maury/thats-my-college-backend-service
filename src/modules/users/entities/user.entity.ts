@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseEntity } from 'src/common/entity/base.entity';
-import { GenderEnum, UserRoleEnum } from '../enums/users.enums';
+import { GenderEnum, UserRoleEnum } from 'src/utils/enums/users.enums';
 
 @Schema({ collection: 'users' })
 export class User extends BaseEntity {
@@ -17,7 +17,7 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Prop({ type: String, required: false })
-  profilePic: string;
+  profilePictureUrl: string;
 
   @Prop({ type: String, required: false })
   password: string;

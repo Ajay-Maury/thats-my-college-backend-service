@@ -14,13 +14,13 @@ export class AdmissionApplicationResponse {
 }
 
 export class AdmissionApplicationResponseDto {
-  status: boolean
-  data?: AdmissionApplicationResponse
-  message: string
+  status: boolean;
+  data?: AdmissionApplicationResponse;
+  message: string;
 }
 
 export class AdmissionApplicationArrayResponseDto {
-  status: boolean
-  data?: AdmissionApplicationResponse[]
-  message: string
+  status: boolean;
+  data?: AdmissionApplicationResponse[];
+  message: string;
 }

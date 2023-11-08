@@ -1,4 +1,7 @@
+import { Transform } from 'class-transformer';
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -6,8 +9,9 @@ import {
   IsPhoneNumber,
   IsString,
   IsStrongPassword,
+  IsUrl,
 } from 'class-validator';
-import { GenderEnum, UserRoleEnum } from '../enums/users.enums';
+import { GenderEnum, UserRoleEnum } from '../../../utils/enums/users.enums';
 
 export class UpdateUserDto {
   // Validate that the firstName property is not empty and is a string.
@@ -34,9 +38,9 @@ export class UpdateUserDto {
   qualification?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   @IsNotEmpty()
-  profilePic?: string;
+  profilePictureUrl?: string;
 
   @IsEnum(GenderEnum, { each: true })
   @IsOptional()
@@ -46,8 +50,17 @@ export class UpdateUserDto {
 
 export class UpdateUserRoleDto {
   @IsNotEmpty()
-  @IsEnum(UserRoleEnum, { each: true })
-  role: UserRoleEnum;
+  @IsArray()
+  @ArrayNotEmpty()
+  @Transform(({ value }) => {
+    if (
+      Array.isArray(value) &&
+      value.every((item) => Object.values(UserRoleEnum).includes(item))
+    ) {
+      return value as UserRoleEnum[];
+    }
+  })
+  role: UserRoleEnum[];
 
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail({}, { message: 'Invalid email format' })

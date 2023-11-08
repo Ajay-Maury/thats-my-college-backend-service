@@ -6,8 +6,9 @@ import {
   IsPhoneNumber,
   IsString,
   IsStrongPassword,
+  IsUrl,
 } from 'class-validator';
-import { GenderEnum } from '../enums/users.enums';
+import { GenderEnum } from 'src/utils/enums/users.enums';
 
 export class UserEmailDto {
   // Validate that the email property is not empty and is in a valid email format.
@@ -39,9 +40,9 @@ export class CreateUserDto extends UserEmailDto {
   qualification?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   @IsNotEmpty()
-  profilePic?: string;
+  profilePictureUrl?: string;
 
   @IsEnum(GenderEnum, { each: true })
   @IsNotEmpty({ message: 'Gender is required' })
