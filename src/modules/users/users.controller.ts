@@ -11,7 +11,11 @@ import {
   Res,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto, CreateUserFormDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  CreateUserFormDto,
+  UserEmailDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserRoleDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UsersService } from './users.service';
@@ -65,21 +69,21 @@ export class UsersController {
   ): Promise<UserResponseDto> {
     try {
       this.logger.log(
-        `Initiated creating/updating user with email: ${createUserDto.email}`,
+        `Initiated creating new user with email: ${createUserDto.email}`,
       );
       const user = await this.usersService.oauthLogin(createUserDto);
 
       this.logger.log(
-        `Successfully created/updated user with email: ${createUserDto.email}`,
+        `Successfully created new user with email: ${createUserDto.email}`,
       );
       return res.status(HttpStatus.CREATED).json({
-        message: `Successfully created/updated new user with email:- ${user.email}`,
+        message: `Successfully created new user with email:- ${user.email}`,
         data: user,
         status: true,
       });
     } catch (error) {
       this.logger.error(
-        `Failed to create/update new user with email: ${createUserDto.email}`,
+        `Failed to create new user with email: ${createUserDto.email}`,
         error,
       );
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -125,6 +129,28 @@ export class UsersController {
       });
     } catch (error) {
       this.logger.error(`Failed to fetch user by user id #${userId}`, error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message, status: false });
+    }
+  }
+
+  @Get('email/:email')
+  @ApiOperation({ summary: 'get user by email id' })
+  @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
+  async findOneUserByEmail(@Res() res, @Param() userEmailDto: UserEmailDto) {
+    const { email } = userEmailDto;
+    try {
+      this.logger.log(`Initiated fetching user by email:- ${email}`);
+      const user = await this.usersService.getUserByEmail(email);
+      this.logger.log(`Successfully fetched user by email:- ${email}`);
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully fetched user by email:- ${email}`,
+        data: user,
+        status: true,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to fetch user by email:- ${email}`, error);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: error.message, status: false });
