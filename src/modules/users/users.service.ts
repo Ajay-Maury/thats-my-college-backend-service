@@ -9,7 +9,11 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
 import { CreateUserDto, CreateUserFormDto } from './dto/create-user.dto';
-import { UpdateUserDto, UpdateUserRoleDto } from './dto/update-user.dto';
+import {
+  UpdateUserDto,
+  UpdateUserPasswordDto,
+  UpdateUserRoleDto,
+} from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -72,17 +76,11 @@ export class UsersService {
     return user;
   }
 
-  // Update a user by their ID, with optional password hashing
+  // Update a user by their Id
   public async updateUserById(id: string, updateUserDto: UpdateUserDto) {
-    if (updateUserDto.password) {
-      // Hash the new password before updating it in the database
-      const hashedPassword = await bcrypt.hash(updateUserDto.password, 12);
-      updateUserDto = { ...updateUserDto, password: hashedPassword };
-    }
-
     // Get updated info from entity util service
     const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
-    // Find and update the user by ID
+    // Find and update the user by Id
     const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
       { ...updateUserDto, ...updatedInfo },
@@ -91,6 +89,28 @@ export class UsersService {
 
     if (!updatedUser)
       throw new NotFoundException(`User with user id #${id} not found`);
+
+    return updatedUser;
+  }
+
+  // Update a user password
+  public async updateUserPassword(
+    updateUserPasswordDto: UpdateUserPasswordDto,
+  ) {
+    const { email, password } = updateUserPasswordDto;
+
+    const user = await this.getUserByEmail(email);
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Get updated info from entity util service
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
+    // Find and update the user by Id
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      { _id: user._id },
+      { password: hashedPassword, ...updatedInfo },
+      { new: true, select: '-password' },
+    );
 
     return updatedUser;
   }
@@ -107,14 +127,7 @@ export class UsersService {
   }
 
   public async oauthLogin(userDto: CreateUserDto) {
-    return await this.userModel.findOneAndUpdate(
-      { email: userDto.email },
-      userDto,
-      {
-        new: true,
-        upsert: true, // Make this update into an upsert
-      },
-    );
+    return await this.userModel.create(userDto);
   }
 
   public async updateUserRole(updateUserRoleDto: UpdateUserRoleDto) {
@@ -132,6 +145,13 @@ export class UsersService {
         `user with email:- ${updateUserRoleDto.email} not found`,
       );
 
+    return user;
+  }
+
+  public async getUserByEmail(email: string) {
+    const user = await this.userModel.findOne({ email }, { password: 0 });
+    if (!user)
+      throw new NotFoundException(`User with email:- ${email} not found`);
     return user;
   }
 }
