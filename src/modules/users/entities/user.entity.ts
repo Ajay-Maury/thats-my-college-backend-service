@@ -26,12 +26,11 @@ export class User extends BaseEntity {
   qualification: string;
 
   @Prop({
-    enum: UserRoleEnum,
     required: true,
-    type: String,
-    default: UserRoleEnum.USER,
+    type: [{ type: String, enum: UserRoleEnum }],
+    default: [UserRoleEnum.USER],
   })
-  role: UserRoleEnum;
+  role: UserRoleEnum[];
 
   @Prop({
     enum: GenderEnum,
