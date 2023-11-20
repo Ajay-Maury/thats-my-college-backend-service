@@ -8,6 +8,7 @@ import { CoursesModule } from './modules/courses/courses.module';
 import { EntityUtilsModule } from './common/entity-utils/entityUtils.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AdmissionApplicationModule } from './modules/admission-application/admission-application.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthModule } from './modules/auth/auth.module';
     CollegeModule, // Import the CollegeModule for your college-related functionality
     CoursesModule,
     UsersModule,
+    AdmissionApplicationModule,
   ],
   controllers: [AppController], // Define controllers for handling HTTP requests
   providers: [AppService], // Define application-level services
