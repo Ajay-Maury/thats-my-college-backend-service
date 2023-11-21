@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { UserRoleEnum } from 'src/utils/enums/users.enums';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RoleGuard } from '../auth/guards/role.gaurd';
+import { RoleGuard } from '../auth/guards/role.guard';
 import {
   CreateUserDto,
   CreateUserFormDto,
@@ -70,7 +70,7 @@ export class UsersController {
   }
 
   @Post('oauth-login')
-  @ApiOperation({ summary: 'create or update user by oauth login' })
+  @ApiOperation({ summary: 'create user by oauth login details' })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponseDto })
   async oauthLogin(
     @Res() res,
@@ -103,6 +103,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'get all users' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto, isArray: true })
   async findAllUsers(@Res() res): Promise<UserResponseDto[]> {
@@ -124,6 +126,8 @@ export class UsersController {
   }
 
   @Get(':userId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'get user by user id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async findOneUserById(@Res() res, @Param('userId') userId: string) {
@@ -144,7 +148,9 @@ export class UsersController {
     }
   }
 
-  @Get('email/:email')
+  @Get('email/:email')  
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'get user by email id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async findOneUserByEmail(@Res() res, @Param() userEmailDto: UserEmailDto) {
@@ -167,10 +173,7 @@ export class UsersController {
   }
 
   @Patch(':userId')
-  @UseGuards(
-    JwtAuthGuard,
-    new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.USER]),
-  )
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'update user by user id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })

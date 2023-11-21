@@ -22,7 +22,7 @@ import { GetAuthToken } from 'src/common/decorators/getAuthToken.decorator';
 import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
 import { UserRoleEnum } from 'src/utils/enums/users.enums';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RoleGuard } from '../auth/guards/role.gaurd';
+import { RoleGuard } from '../auth/guards/role.guard';
 import { CollegeService } from './college.service';
 import {
   CollegeResponseDto,

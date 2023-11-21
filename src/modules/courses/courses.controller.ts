@@ -21,7 +21,7 @@ import {
 import { GetAuthToken } from 'src/common/decorators/getAuthToken.decorator';
 import { UserRoleEnum } from 'src/utils/enums/users.enums';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RoleGuard } from '../auth/guards/role.gaurd';
+import { RoleGuard } from '../auth/guards/role.guard';
 import { CoursesService } from './courses.service';
 import {
   CourseDataWithCollegeDetailsResponseDto,

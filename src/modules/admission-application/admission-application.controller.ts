@@ -9,8 +9,9 @@ import {
   Patch,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdmissionApplicationService } from './admission-application.service';
 import { CreateAdmissionApplicationDto } from './dto/create-admission-application.dto';
 import { UpdateAdmissionApplicationDto } from './dto/update-admission-application.dto';
@@ -18,6 +19,9 @@ import {
   AdmissionApplicationArrayResponseDto,
   AdmissionApplicationResponseDto,
 } from './dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../auth/guards/role.guard';
+import { UserRoleEnum } from 'src/utils/enums/users.enums';
 
 @Controller('admission-application')
 @ApiTags('admission-application')
@@ -28,6 +32,8 @@ export class AdmissionApplicationController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'create a new admission application' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -60,6 +66,8 @@ export class AdmissionApplicationController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Get all admission applications' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -88,6 +96,8 @@ export class AdmissionApplicationController {
   }
 
   @Get('user/:userId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Get all admission applications with user id' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -129,6 +139,8 @@ export class AdmissionApplicationController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'get admission application with id' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -163,6 +175,8 @@ export class AdmissionApplicationController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'update admission application with id' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -205,6 +219,8 @@ export class AdmissionApplicationController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'delete admission application with id' })
   @ApiResponse({
     status: HttpStatus.CREATED,
