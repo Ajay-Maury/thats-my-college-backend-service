@@ -6,10 +6,11 @@ export class RoleGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    const user = request.user;
+    const user = request?.user;
 
+    const userRole = user?.role || [];
     // Check if the user has one of the specified roles
-    if (user && this.roles.includes(user.role)) {
+    if (user && userRole.some((item: string) => this.roles.includes(item))) {
       return true; // Allow access for users with the specified roles
     }
 

@@ -1,4 +1,4 @@
-import { GenderEnum, UserRoleEnum } from '../enums/users.enums';
+import { GenderEnum, UserRoleEnum } from '../../../utils/enums/users.enums';
 
 export class UserResponseDto {
   readonly _id: string;
@@ -7,7 +7,8 @@ export class UserResponseDto {
   readonly firstName: string;
   readonly lastName: string;
   readonly isDeleted: boolean;
-  readonly role: UserRoleEnum;
   readonly gender: GenderEnum;
   readonly qualification: string;
+  readonly profilePictureUrl: string;
+  readonly role: UserRoleEnum[];
 }

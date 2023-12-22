@@ -1,33 +1,35 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
   HttpStatus,
-  Res,
   Logger,
-  UseGuards,
+  Param,
+  Patch,
+  Post,
   Query,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
-import { CollegeService } from './college.service';
-import { CreateCollegeDto, CollegeFilterDto } from './dto/create-college.dto';
-import { UpdateCollegeDto } from './dto/update-college.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'; // Import Swagger decorators.
+import { GetAuthToken } from 'src/common/decorators/getAuthToken.decorator';
+import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
+import { UserRoleEnum } from 'src/utils/enums/users.enums';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../auth/guards/role.guard';
+import { CollegeService } from './college.service';
 import {
   CollegeResponseDto,
   CollegeSingleResponseDto,
 } from './dto/college-response.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { EntityUtilsService } from 'src/common/entity-utils/entityUtils.service';
-import { GetAuthToken } from 'src/common/decorators/getAuthToken.decorator';
+import { CollegeFilterDto, CreateCollegeDto } from './dto/create-college.dto';
+import { UpdateCollegeDto } from './dto/update-college.dto';
 
 @Controller('college') // Defines the base route for this controller.
 @ApiTags('college') // Adds Swagger tags for documentation.
@@ -45,7 +47,7 @@ export class CollegeController {
 
   // Create a new college.
   @Post()
-  @UseGuards(JwtAuthGuard) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN])) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
   @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Create college' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.CREATED, type: CollegeResponseDto }) // Describes the response for Swagger.
@@ -143,7 +145,7 @@ export class CollegeController {
 
   // Update a college by college ID.
   @Patch(':collegeId')
-  @UseGuards(JwtAuthGuard) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN])) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
   @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Update college by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
@@ -179,7 +181,7 @@ export class CollegeController {
 
   // Delete a college and its courses by college ID.
   @Delete(':collegeId')
-  @UseGuards(JwtAuthGuard) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN])) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
   @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Delete college and courses by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
