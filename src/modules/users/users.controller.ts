@@ -148,9 +148,9 @@ export class UsersController {
     }
   }
 
-  @Get('email/:email')  
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @Get('email/:email')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'get user by email id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async findOneUserByEmail(@Res() res, @Param() userEmailDto: UserEmailDto) {
