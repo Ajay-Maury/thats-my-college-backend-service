@@ -11,7 +11,12 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AdmissionApplicationService } from './admission-application.service';
 import { CreateAdmissionApplicationDto } from './dto/create-admission-application.dto';
 import { UpdateAdmissionApplicationDto } from './dto/update-admission-application.dto';
