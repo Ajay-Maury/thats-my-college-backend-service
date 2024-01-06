@@ -7,5 +7,5 @@ export class ResponseCallbackRequest {
 export class ResponseCallbackRequestDto {
   message: string;
   data?: ResponseCallbackRequest;
-  isCallbackREquestExists?: boolean;
+  isCallbackRequestExists?: boolean;
 }
