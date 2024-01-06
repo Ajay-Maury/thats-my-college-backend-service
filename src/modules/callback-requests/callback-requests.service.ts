@@ -17,13 +17,13 @@ export class CallbackRequestsService {
     if (existingRequestsCount >= callbackRequestLimit) {
       return {
         message: `${existingRequestsCount} callback request already exists`,
-        isCallbackREquestExists: true,
+        isCallbackRequestExists: true,
       };
     }
     const callbackREquest = await this.callbackRequestModel.create({ userId });
     return {
       message: `Callback request placed successfully`,
-      isCallbackREquestExists: false,
+      isCallbackRequestExists: false,
       data: callbackREquest,
     };
   }
