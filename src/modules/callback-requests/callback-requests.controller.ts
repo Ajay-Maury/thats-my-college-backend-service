@@ -53,7 +53,7 @@ export class CallbackRequestsController {
           `Successfully created callback request for userId:- #${userId}`,
       );
       return res
-        .status(HttpStatus.CREATED)
+        .status(HttpStatus.OK)
         .json({ ...callbackRequestResponse });
     } catch (error) {
       this.logger.error(
