@@ -11,4 +11,5 @@ export class UserResponseDto {
   readonly qualification: string;
   readonly profilePictureUrl: string;
   readonly role: UserRoleEnum[];
+  readonly authToken?: string;
 }
