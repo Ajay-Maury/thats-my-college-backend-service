@@ -15,6 +15,7 @@ import {
   UpdateUserRoleDto,
 } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { AuthService } from '../auth/auth.services';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +27,8 @@ export class UsersService {
     private userModel = Model<User>, // Initialize 'userModel' with the injected model
     @Inject(forwardRef(() => EntityUtilsService))
     private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService, // Injects the EntityUtilsService.
   ) {}
 
   // Create a new user with password hashing
@@ -47,8 +50,10 @@ export class UsersService {
     const userResponse = user.toObject();
     delete userResponse.password;
 
-    // Return user object
-    return userResponse;
+    //generate jwt token
+    const authToken = this.authService.generateJwtToken(user);
+    // return userObject with jwt token
+    return { ...userResponse, authToken };
   }
 
   // Find all users (excluding the password field)
@@ -127,7 +132,10 @@ export class UsersService {
   }
 
   public async oauthLogin(userDto: CreateUserDto) {
-    return await this.userModel.create(userDto);
+    const user = await this.userModel.create(userDto);
+    const userResponse = user.toObject();
+    const authToken = this.authService.generateJwtToken(userResponse);
+    return { ...userResponse, authToken };
   }
 
   public async updateUserRole(updateUserRoleDto: UpdateUserRoleDto) {
@@ -152,6 +160,8 @@ export class UsersService {
     const user = await this.userModel.findOne({ email }, { password: 0 });
     if (!user)
       throw new NotFoundException(`User with email:- ${email} not found`);
-    return user;
+    const userResponse = user.toObject();
+    const authToken = this.authService.generateJwtToken(userResponse);
+    return { ...userResponse, authToken };
   }
 }

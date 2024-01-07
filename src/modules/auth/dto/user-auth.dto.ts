@@ -24,5 +24,7 @@ export class AuthenticateUserDto {
 }
 
 export class UserAuthTokenResponse {
-  access_token: string;
+  authToken: string;
+  message: string;
+  status: boolean;
 }

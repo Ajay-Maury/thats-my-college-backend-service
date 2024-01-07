@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { CONSTANTS, SWAGGER_CONSTANTS, SWAGGER_TAGS } from './utils/constants';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { LoggerProvider } from './logger/logger.provider';
+// import { LoggerProvider } from './logger/logger.provider';
 
 async function bootstrap() {
   // Create a Nest.js application instance

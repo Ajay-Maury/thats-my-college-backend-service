@@ -45,10 +45,12 @@ export class AuthService {
     }
 
     // Generate a JWT token with user information and return it.
+    return this.generateJwtToken(user);
+  }
+
+  public generateJwtToken(user: UserResponseDto) {
     const payload = { id: user._id, email: user.email };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return this.jwtService.sign(payload);
   }
 
   // Get user details from a JWT token.
@@ -60,5 +62,21 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Invalid token'); // Throw an exception if the token is invalid.
     }
+  }
+
+  // Authenticate a user with email
+  public async authenticateUserByEmail(email: string) {
+    // Find the user by email.
+    const user = await this.usersService.findOneByEmail(email);
+
+    // If no user with the provided email is found, throw an UnauthorizedException.
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Generate a JWT token with user information and return it.
+    const payload = { id: user._id, email: user.email };
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 }

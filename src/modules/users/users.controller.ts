@@ -103,9 +103,12 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN]),
+  )
   @ApiBearerAuth('jwt')
-  @ApiOperation({ summary: 'get all users' })
+  @ApiOperation({ summary: 'get all users (for admin use only)' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto, isArray: true })
   async findAllUsers(@Res() res): Promise<UserResponseDto[]> {
     try {
@@ -205,7 +208,9 @@ export class UsersController {
   @Patch('role/update')
   @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.SUPER_ADMIN]))
   @ApiBearerAuth('jwt')
-  @ApiOperation({ summary: 'update user role by user email' })
+  @ApiOperation({
+    summary: 'update user role by user email (for admin use only)',
+  })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async updateUserRole(
     @Res() res,
@@ -239,7 +244,7 @@ export class UsersController {
   @Delete(':userId')
   @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
   @ApiBearerAuth('jwt')
-  @ApiOperation({ summary: 'delete user by user id' })
+  @ApiOperation({ summary: 'delete user by user id (for admin use only)' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async removeUserById(@Res() res, @Param('userId') userId: string) {
     try {
