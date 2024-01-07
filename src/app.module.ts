@@ -9,6 +9,7 @@ import { EntityUtilsModule } from './common/entity-utils/entityUtils.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdmissionApplicationModule } from './modules/admission-application/admission-application.module';
+import { CallbackRequestsModule } from './modules/callback-requests/callback-requests.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AdmissionApplicationModule } from './modules/admission-application/admi
     CoursesModule,
     UsersModule,
     AdmissionApplicationModule,
+    CallbackRequestsModule,
   ],
   controllers: [AppController], // Define controllers for handling HTTP requests
   providers: [AppService], // Define application-level services

@@ -212,7 +212,6 @@ export class UsersController {
     @Body() updateUserRoleDto: UpdateUserRoleDto,
   ) {
     const { email } = updateUserRoleDto;
-    console.log('email:', email);
     try {
       this.logger.log(`Initiated updating user role by user email:- ${email}`);
       const updatedUser = await this.usersService.updateUserRole(

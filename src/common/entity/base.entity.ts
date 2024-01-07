@@ -4,8 +4,8 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class BaseEntity extends Document {
-  @Prop({ type: String, default: () => new Date().toISOString() })
-  createdAt: string;
+  @Prop({ type: String || Date, default: () => new Date().toISOString() })
+  createdAt: string | Date;
 
   @Prop({ type: String, default: () => new Date().toISOString() })
   updatedAt: string;
