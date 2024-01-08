@@ -40,7 +40,7 @@ export class UpdateUserDto {
   @IsOptional()
   @IsUrl()
   @IsNotEmpty()
-  profilePictureUrl?: string;
+  profilePic?: string;
 
   @IsEnum(GenderEnum, { each: true })
   @IsOptional()

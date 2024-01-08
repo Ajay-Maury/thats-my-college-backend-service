@@ -42,7 +42,7 @@ export class CreateUserDto extends UserEmailDto {
   @IsOptional()
   @IsUrl()
   @IsNotEmpty()
-  profilePictureUrl?: string;
+  profilePic?: string;
 
   @IsEnum(GenderEnum, { each: true })
   @IsNotEmpty({ message: 'Gender is required' })
