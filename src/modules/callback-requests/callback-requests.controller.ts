@@ -52,9 +52,7 @@ export class CallbackRequestsController {
         callbackRequestResponse?.message ||
           `Successfully created callback request for userId:- #${userId}`,
       );
-      return res
-        .status(HttpStatus.OK)
-        .json({ ...callbackRequestResponse });
+      return res.status(HttpStatus.OK).json({ ...callbackRequestResponse });
     } catch (error) {
       this.logger.error(
         `Failed create to callback request for userId:- #${userId}`,
@@ -74,7 +72,9 @@ export class CallbackRequestsController {
     new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN]),
   )
   @ApiBearerAuth('jwt')
-  @ApiOperation({ summary: 'Get all callback request of a user (admin use only)' })
+  @ApiOperation({
+    summary: 'Get all callback request of a user (admin use only)',
+  })
   @ApiResponse({ status: HttpStatus.CREATED, type: ResponseCallbackRequestDto })
   async findOne(@Param('userId') userId: string, @Res() res) {
     try {
@@ -108,7 +108,9 @@ export class CallbackRequestsController {
     new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN]),
   )
   @ApiBearerAuth('jwt')
-  @ApiOperation({ summary: 'Delete one callback request of a user (admin use only)' })
+  @ApiOperation({
+    summary: 'Delete one callback request of a user (admin use only)',
+  })
   @ApiResponse({ status: HttpStatus.CREATED, type: ResponseCallbackRequestDto })
   async remove(@Param('userId') userId: string, @Res() res) {
     try {

@@ -21,6 +21,9 @@ export class AdmissionApplicationResponseDto {
 
 export class AdmissionApplicationArrayResponseDto {
   status: boolean;
-  data?: AdmissionApplicationResponse[];
+  data?: {
+    applications: AdmissionApplicationResponse[];
+    totalDocuments: number;
+  };
   message: string;
 }
