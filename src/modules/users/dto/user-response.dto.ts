@@ -9,7 +9,7 @@ export class UserResponseDto {
   readonly isDeleted: boolean;
   readonly gender: GenderEnum;
   readonly qualification: string;
-  readonly profilePictureUrl: string;
+  readonly profilePic: string;
   readonly role: UserRoleEnum[];
   readonly authToken?: string;
 }

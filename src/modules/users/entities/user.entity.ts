@@ -17,7 +17,7 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Prop({ type: String, required: false })
-  profilePictureUrl: string;
+  profilePic: string;
 
   @Prop({ type: String, required: false })
   password: string;
