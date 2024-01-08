@@ -1,15 +1,13 @@
 import {
   IsEmail,
-  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
-import { AdmissionApplicationStatusEnum } from '../enums/admission-application.enums';
 
-export class AdmissionApplicationDto {
+export class CreateAdmissionApplicationDto {
   @IsString()
   @IsNotEmpty()
   applicantName: string;
@@ -39,15 +37,4 @@ export class AdmissionApplicationDto {
   @IsString()
   @IsNotEmpty()
   applicantCurrentCity?: string;
-}
-
-export class CreateAdmissionApplicationDto extends AdmissionApplicationDto {
-  @IsMongoId()
-  @IsNotEmpty()
-  userId: string;
-
-  @IsEnum(AdmissionApplicationStatusEnum, { each: true })
-  @IsNotEmpty()
-  status: AdmissionApplicationStatusEnum =
-    AdmissionApplicationStatusEnum.APPLIED;
 }

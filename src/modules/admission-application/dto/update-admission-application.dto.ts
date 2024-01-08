@@ -1,10 +1,10 @@
 import { PartialType } from '@nestjs/swagger';
-import { AdmissionApplicationDto } from './create-admission-application.dto';
+import { CreateAdmissionApplicationDto } from './create-admission-application.dto';
 import { AdmissionApplicationStatusEnum } from '../enums/admission-application.enums';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 
 export class UpdateAdmissionApplicationDto extends PartialType(
-  AdmissionApplicationDto,
+  CreateAdmissionApplicationDto,
 ) {}
 
 export class UpdateApplicationStatusDto {

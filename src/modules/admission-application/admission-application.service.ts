@@ -6,8 +6,12 @@ import { College } from '../college/entities/college.entity';
 import { Course } from '../courses/entities/course.entity';
 import { User } from '../users/entities/user.entity';
 import { CreateAdmissionApplicationDto } from './dto/create-admission-application.dto';
-import { UpdateAdmissionApplicationDto } from './dto/update-admission-application.dto';
+import {
+  UpdateAdmissionApplicationDto,
+  UpdateApplicationStatusDto,
+} from './dto/update-admission-application.dto';
 import { AdmissionApplication } from './entities/admission-application.entity';
+import { AdmissionApplicationStatusEnum } from './enums/admission-application.enums';
 
 @Injectable()
 export class AdmissionApplicationService {
@@ -70,6 +74,7 @@ export class AdmissionApplicationService {
 
   public async create(
     createAdmissionApplicationDto: CreateAdmissionApplicationDto,
+    userId: string,
   ) {
     await this.checkPayloadIds(createAdmissionApplicationDto);
 
@@ -77,12 +82,18 @@ export class AdmissionApplicationService {
 
     return await this.admissionApplicationModule.create({
       ...createAdmissionApplicationDto,
+      userId,
+      status: AdmissionApplicationStatusEnum.APPLIED,
       ...createdInfo,
     });
   }
 
   public async findAll() {
-    return await this.admissionApplicationModule.find();
+    const applications = await this.admissionApplicationModule.find();
+    const totalDocuments =
+      await this.admissionApplicationModule.countDocuments();
+
+    return { applications, totalDocuments };
   }
 
   public async findOne(id: string) {
@@ -95,8 +106,14 @@ export class AdmissionApplicationService {
   }
 
   public async findAllAdmissionApplicationByUserId(userId: string) {
-    const application = await this.admissionApplicationModule.find({ userId });
-    return application;
+    const applications = await this.admissionApplicationModule.find({ userId });
+    const totalDocuments = await this.admissionApplicationModule.countDocuments(
+      {
+        userId,
+      },
+    );
+
+    return { applications, totalDocuments };
   }
 
   public async update(
@@ -107,10 +124,37 @@ export class AdmissionApplicationService {
 
     const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
     const updatedApplication =
-      await this.admissionApplicationModule.findByIdAndUpdate(id, {
-        ...updateAdmissionApplicationDto,
-        ...updatedInfo,
-      });
+      await this.admissionApplicationModule.findByIdAndUpdate(
+        id,
+        {
+          ...updateAdmissionApplicationDto,
+          ...updatedInfo,
+        },
+        { new: true },
+      );
+
+    if (!updatedApplication)
+      throw new NotFoundException(
+        `Admission application with id #${id} not found`,
+      );
+
+    return updatedApplication;
+  }
+
+  public async updateAdmissionApplicationStatus(
+    id: string,
+    updateApplicationStatusDto: UpdateApplicationStatusDto,
+  ) {
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
+    const updatedApplication =
+      await this.admissionApplicationModule.findByIdAndUpdate(
+        id,
+        {
+          ...updateApplicationStatusDto,
+          ...updatedInfo,
+        },
+        { new: true },
+      );
 
     if (!updatedApplication)
       throw new NotFoundException(
