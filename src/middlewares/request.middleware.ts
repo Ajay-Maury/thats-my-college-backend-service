@@ -1,46 +1,50 @@
-import { Request, Response, NextFunction } from 'express';
-import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import * as moment from 'moment';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
+import * as os from 'os';
 
 @Injectable()
-export class AppLoggerMiddleware implements NestMiddleware {
+export class PerformanceMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
 
-  use(request: Request, response: Response, next: NextFunction): void {
-    const { ip, method, originalUrl } = request;
-    const userAgent = request.get('user-agent') || '';
+  use(req: Request, res: Response, next: NextFunction) {
+    const { ip, method, originalUrl } = req;
+    const userAgent = req.get('user-agent') || '';
 
-    const startTime = moment();
-    const startUsage = process.cpuUsage();
-    const startMemoryUsage = process.memoryUsage();
+    const startMemoryUsage = os.freemem();
+    const startCpuUsage = process.cpuUsage();
+    const startTime = process.hrtime();
 
-    response.on('finish', () => {
-      const { statusCode } = response;
-      const endTime = moment();
-      // Calculate time taken by api
-      const elapsedTimeInSeconds = endTime.diff(startTime, 'seconds', true);
-      // Calculate CPU usage percentage
-      const endUsage = process.cpuUsage(startUsage);
-      const cpuUsagePercent =
-        (endUsage.user + endUsage.system) / 1000 / elapsedTimeInSeconds;
+    res.once('finish', async () => {
+      const { statusCode } = res;
 
-      // Calculate memory usage percentage
-      const endMemoryUsage = process.memoryUsage();
-      const memoryUsage =
-        (endMemoryUsage.heapUsed - startMemoryUsage.heapUsed) / (1024 * 1024);
-      this.logger.log(`
-        \nREQUEST INFO:
-          - Method: ${method}
-          - URL: ${originalUrl}
-          - User Agent: ${userAgent}
-          - IP: ${ip}
-        \nRESPONSE INFO:
-          - Status Code: ${statusCode}
-          - Response Time: ${elapsedTimeInSeconds.toFixed(2)} seconds
-          - CPU Usage: ${cpuUsagePercent.toFixed(2)}%
-          - Memory Usage: ${memoryUsage.toFixed(2)} MB
-      `);
+      // Memory Usage Calculation
+      const endMemoryUsage = os.freemem();
+      const totalMemory = os.totalmem();
+      const memoryUsedPercentage =
+        ((startMemoryUsage - endMemoryUsage) / totalMemory) * 100;
+
+      // CPU Usage Calculation using os
+      const endCpuUsage = process.cpuUsage(startCpuUsage);
+      const cpuTime = (endCpuUsage.user + endCpuUsage.system) / 1000000; // Convert to seconds
+      const cpuUsagePercentage = (cpuTime / os.cpus().length) * 100;
+
+      // Response Time Calculation
+      const endTime = process.hrtime(startTime);
+      const elapsedTimeInSeconds = endTime[0] + endTime[1] / 1e9;
+
+      this.logger.log({
+        message: 'Request and Response Metrics',
+        method,
+        url: originalUrl,
+        userAgent,
+        ip,
+        statusCode,
+        responseTime: `${elapsedTimeInSeconds.toFixed(2)} seconds`,
+        cpuUsage: `${cpuUsagePercentage.toFixed(2)}%`,
+        memoryUsage: `${memoryUsedPercentage.toFixed(2)}%`,
+      });
     });
+
     next();
   }
 }

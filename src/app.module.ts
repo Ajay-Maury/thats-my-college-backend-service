@@ -10,7 +10,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdmissionApplicationModule } from './modules/admission-application/admission-application.module';
 import { CallbackRequestsModule } from './modules/callback-requests/callback-requests.module';
-import { AppLoggerMiddleware } from './middlewares/request.middleware';
+import { PerformanceMiddleware } from './middlewares/request.middleware';
 
 @Module({
   imports: [
@@ -33,7 +33,7 @@ import { AppLoggerMiddleware } from './middlewares/request.middleware';
 export class AppModule {
   // Configure middleware for the application
   configure(consumer: MiddlewareConsumer) {
-    // Apply the AppLoggerMiddleware to all routes ('*')
-    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+    // Apply the PerformanceMiddleware to all routes ('*')
+    consumer.apply(PerformanceMiddleware).forRoutes('*');
   }
 } // AppModule is the root module of your Nest.js application
