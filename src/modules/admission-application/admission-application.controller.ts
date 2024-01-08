@@ -139,7 +139,7 @@ export class AdmissionApplicationController {
           [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN].includes(role),
         )
       ) {
-        throw new UnauthorizedException(`Invalid user`);
+        throw new Error(`Invalid user`);
       }
 
       this.logger.log(
@@ -313,8 +313,6 @@ export class AdmissionApplicationController {
     @Param('userId') userId: string,
     @Req() req,
   ) {
-    console.log('id:', id);
-    console.log('userId:', userId);
     try {
       const user = req?.user;
       if (
@@ -323,7 +321,7 @@ export class AdmissionApplicationController {
           [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN].includes(role),
         )
       ) {
-        throw new UnauthorizedException(`Invalid user`);
+        throw new Error(`Invalid user`);
       }
       this.logger.log(
         `Initiated deleting admission application with id #${id}`,
