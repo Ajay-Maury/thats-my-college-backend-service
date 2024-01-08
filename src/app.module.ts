@@ -31,7 +31,9 @@ import { AppLoggerMiddleware } from './middlewares/request.middleware';
   providers: [AppService], // Define application-level services
 })
 export class AppModule {
+  // Configure middleware for the application
   configure(consumer: MiddlewareConsumer) {
+    // Apply the AppLoggerMiddleware to all routes ('*')
     consumer.apply(AppLoggerMiddleware).forRoutes('*');
   }
 } // AppModule is the root module of your Nest.js application
