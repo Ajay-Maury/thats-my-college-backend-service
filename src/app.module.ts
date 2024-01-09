@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -10,6 +10,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdmissionApplicationModule } from './modules/admission-application/admission-application.module';
 import { CallbackRequestsModule } from './modules/callback-requests/callback-requests.module';
+import { PerformanceMiddleware } from './middlewares/request.middleware';
 
 @Module({
   imports: [
@@ -29,4 +30,10 @@ import { CallbackRequestsModule } from './modules/callback-requests/callback-req
   controllers: [AppController], // Define controllers for handling HTTP requests
   providers: [AppService], // Define application-level services
 })
-export class AppModule {} // AppModule is the root module of your Nest.js application
+export class AppModule {
+  // Configure middleware for the application
+  configure(consumer: MiddlewareConsumer) {
+    // Apply the PerformanceMiddleware to all routes ('*')
+    consumer.apply(PerformanceMiddleware).forRoutes('*');
+  }
+} // AppModule is the root module of your Nest.js application
