@@ -7,7 +7,7 @@ export class PerformanceMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
 
   use(req: Request, res: Response, next: NextFunction) {
-    const { ip, method, originalUrl } = req;
+    const { method, originalUrl } = req;
     const userAgent = req.get('user-agent') || '';
 
     const startMemoryUsage = os.freemem();
@@ -16,6 +16,9 @@ export class PerformanceMiddleware implements NestMiddleware {
 
     res.once('finish', async () => {
       const { statusCode } = res;
+
+      // Get reliable IP address
+      const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
       // Memory Usage Calculation
       const endMemoryUsage = os.freemem();
@@ -40,8 +43,14 @@ export class PerformanceMiddleware implements NestMiddleware {
         ip,
         statusCode,
         responseTime: `${elapsedTimeInSeconds.toFixed(2)} seconds`,
-        cpuUsage: `${cpuUsagePercentage.toFixed(2)}%`,
-        memoryUsage: `${memoryUsedPercentage.toFixed(2)}%`,
+        cpuUsage: `${cpuUsagePercentage.toFixed(2)}% of total ${
+          os.cpus().length
+        } CPU core`,
+        memoryUsage: `${memoryUsedPercentage.toFixed(2)}% of total memory ${(
+          totalMemory /
+          1021 /
+          1024
+        ).toFixed(2)} MB`,
       });
     });
 
