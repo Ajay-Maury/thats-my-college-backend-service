@@ -131,19 +131,19 @@ export class AdmissionApplicationController {
     @Req() req,
   ) {
     try {
+      this.logger.log(
+        `Initiated fetching admission applications with user id #${userId}`,
+      );
+
       const user = req?.user;
       if (
-        user._id !== userId &&
+        user._id.toString() !== userId &&
         !user.role.some((role: UserRoleEnum) =>
           [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN].includes(role),
         )
       ) {
         throw new Error(`Invalid user`);
       }
-
-      this.logger.log(
-        `Initiated fetching admission applications with user id #${userId}`,
-      );
 
       const applications =
         await this.admissionApplicationService.findAllAdmissionApplicationByUserId(
@@ -313,18 +313,18 @@ export class AdmissionApplicationController {
     @Req() req,
   ) {
     try {
+      this.logger.log(
+        `Initiated deleting admission application with id #${id}`,
+      );
       const user = req?.user;
       if (
-        user._id !== userId &&
+        user._id.toString() !== userId &&
         !user.role.some((role: UserRoleEnum) =>
           [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN].includes(role),
         )
       ) {
         throw new Error(`Invalid user`);
       }
-      this.logger.log(
-        `Initiated deleting admission application with id #${id}`,
-      );
 
       await this.admissionApplicationService.remove(id);
 
