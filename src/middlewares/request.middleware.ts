@@ -46,11 +46,11 @@ export class PerformanceMiddleware implements NestMiddleware {
         cpuUsage: `${cpuUsagePercentage.toFixed(2)}% of total ${
           os.cpus().length
         } CPU core`,
-        memoryUsage: `${memoryUsedPercentage.toFixed(2)}% of total memory ${(
+        memoryUsage: `${memoryUsedPercentage.toFixed(2)}% of total ${(
           totalMemory /
           1021 /
           1024
-        ).toFixed(2)} MB`,
+        ).toFixed(2)} MB memory`,
       });
     });
 
