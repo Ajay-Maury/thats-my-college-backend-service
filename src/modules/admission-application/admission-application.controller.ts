@@ -63,7 +63,7 @@ export class AdmissionApplicationController {
       const admissionApplication =
         await this.admissionApplicationService.create(
           createAdmissionApplicationDto,
-          userId,
+          userId.toString(),
         );
 
       this.logger.log(
