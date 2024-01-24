@@ -47,11 +47,11 @@ export class CollegeService {
 
     // Add filters to the query object if they are not empty
     if (city) {
-      query.city = city;
+      query.city = { $regex: new RegExp(city, 'i') };
     }
 
     if (collegeType) {
-      query.collegeType = collegeType;
+      query.collegeType = { $regex: new RegExp(collegeType, 'i') };
     }
 
     if (featured) {
@@ -63,7 +63,7 @@ export class CollegeService {
     }
 
     if (state) {
-      query.state = state;
+      query.state = { $regex: new RegExp(state, 'i') };
     }
 
     // Add the name regex search condition if collegeName is not empty
