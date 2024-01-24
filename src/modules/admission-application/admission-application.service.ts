@@ -97,16 +97,23 @@ export class AdmissionApplicationService {
   }
 
   public async findOne(id: string) {
-    const application = await this.admissionApplicationModule.findById(id);
+    const application = await this.admissionApplicationModule
+      .findById(id)
+      .populate('collegeId');
+
     if (!application)
       throw new NotFoundException(
         `Admission application with id #${id} not found`,
       );
+
     return application;
   }
 
   public async findAllAdmissionApplicationByUserId(userId: string) {
-    const applications = await this.admissionApplicationModule.find({ userId });
+    const applications = await this.admissionApplicationModule
+      .find({ userId })
+      .populate('collegeId');
+
     const totalDocuments = await this.admissionApplicationModule.countDocuments(
       {
         userId,
