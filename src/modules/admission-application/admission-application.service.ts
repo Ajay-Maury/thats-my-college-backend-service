@@ -89,7 +89,9 @@ export class AdmissionApplicationService {
   }
 
   public async findAll() {
-    const applications = await this.admissionApplicationModule.find();
+    const applications = await this.admissionApplicationModule
+      .find()
+      .populate('collegeId');
     const totalDocuments =
       await this.admissionApplicationModule.countDocuments();
 
