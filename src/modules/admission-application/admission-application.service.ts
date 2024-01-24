@@ -164,14 +164,15 @@ export class AdmissionApplicationService {
     return updatedApplication;
   }
 
-  public async remove(id: string) {
-    const application = await this.admissionApplicationModule.findByIdAndDelete(
-      id,
-    );
+  public async remove(id: string, userId: string) {
+    const application = await this.admissionApplicationModule.findOneAndDelete({
+      _id: id,
+      userId,
+    });
 
     if (!application)
       throw new NotFoundException(
-        `Admission application with id #${id} not found`,
+        `Admission application with id #${id} not found for user with id #${userId}`,
       );
 
     return application;

@@ -298,47 +298,38 @@ export class AdmissionApplicationController {
     }
   }
 
-  @Delete(':userId/:applicationId')
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
+  @Delete(':applicationId')
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'delete admission application with id' })
   @ApiResponse({
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
     type: AdmissionApplicationResponseDto,
   })
   async remove(
     @Res() res: Response,
     @Param('applicationId') id: string,
-    @Param('userId') userId: string,
     @Req() req,
   ) {
+    const userId = (req?.user._id).toString();
     try {
       this.logger.log(
-        `Initiated deleting admission application with id #${id}`,
+        `Initiated deleting admission application with id #${id} for user with id #${userId}`,
       );
-      const user = req?.user;
-      if (
-        user._id.toString() !== userId &&
-        !user.role.some((role: UserRoleEnum) =>
-          [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN].includes(role),
-        )
-      ) {
-        throw new Error(`Invalid user`);
-      }
 
-      await this.admissionApplicationService.remove(id);
+      await this.admissionApplicationService.remove(id, userId);
 
       this.logger.log(
-        `Successfully deleted admission application with id #${id}`,
+        `Successfully deleted admission application with id #${id} for user with id #${userId}`,
       );
 
       return res.status(HttpStatus.OK).json({
         status: true,
-        message: `Successfully deleted admission application with id #${id}`,
+        message: `Successfully deleted admission application with id #${id} for user with id #${userId}`,
       });
     } catch (error) {
       this.logger.error(
-        `Failed to delete admission applications with id #${id}`,
+        `Failed to delete admission applications with id #${id} for user with id #${userId}`,
         error,
       );
 
