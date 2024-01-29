@@ -1,5 +1,19 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/esfprp7h4sxx/public_html  # Replace with your desired deployment path
-    - /bin/cp -rf * $DEPLOYPATH
+    # 1. Build the NestJS project
+    - npm install
+    - npm run build
+
+    # 2. Set the deployment path (replace with your desired path)
+    - export DEPLOYPATH=/home/esfprp7h4sxx/public_html  # Replace with your path
+
+    # 3. Copy the built files to the deployment path
+    - /bin/cp -rf dist/ $DEPLOYPATH
+
+    # 4. Install production dependencies (if applicable)
+    - cd $DEPLOYPATH
+    - npm install --only=production
+
+    # 5. Start the Node.js server (replace with your start command)
+    - npm run start:prod  # Example using PM2 process manager
