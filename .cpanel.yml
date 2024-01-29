@@ -1,3 +1,5 @@
 ---
 deployment:
   tasks:
+    - export DEPLOYPATH=/home/esfprp7h4sxx/public_html  # Replace with your desired deployment path
+    - /bin/cp -rf * $DEPLOYPATH
