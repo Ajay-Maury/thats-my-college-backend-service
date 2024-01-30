@@ -6,7 +6,7 @@ deployment:
     - npm run build
 
     # 2. Set the deployment path (replace with your desired path)
-    - export DEPLOYPATH=/home/esfprp7h4sxx/public_html  # Replace with your path
+    - export DEPLOYPATH=/home/i9obus6h9p88/public_html  # Replace with your path
 
     # 3. Copy the built files to the deployment path
     - /bin/cp -rf dist/ $DEPLOYPATH
