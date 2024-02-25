@@ -32,6 +32,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { UserRoleEnum } from 'src/utils/enums/users.enums';
 import { Response } from 'express';
+import { SWAGGER_CONSTANTS } from 'src/utils/constants';
+import { KeyPermissionsGuard } from '../auth/guards/key-permission.gaurd';
 
 @Controller('admission-application')
 @ApiTags('admission-application')
@@ -42,8 +44,9 @@ export class AdmissionApplicationController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'create a new admission application' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -88,8 +91,13 @@ export class AdmissionApplicationController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
-  @ApiBearerAuth('jwt')
+  @UseGuards(
+    JwtAuthGuard,
+    KeyPermissionsGuard,
+    new RoleGuard([UserRoleEnum.ADMIN]),
+  )
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'Get all admission applications (admin use only)' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -118,8 +126,9 @@ export class AdmissionApplicationController {
   }
 
   @Get('user/:userId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'Get all admission applications with user id' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -172,8 +181,9 @@ export class AdmissionApplicationController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'get admission application with id' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -208,8 +218,9 @@ export class AdmissionApplicationController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'update admission application with id' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -252,8 +263,13 @@ export class AdmissionApplicationController {
   }
 
   @Patch('update-status/:id')
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
-  @ApiBearerAuth('jwt')
+  @UseGuards(
+    JwtAuthGuard,
+    KeyPermissionsGuard,
+    new RoleGuard([UserRoleEnum.ADMIN]),
+  )
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({
     summary: 'update admission application status with id (admin use only)',
   })
@@ -299,8 +315,9 @@ export class AdmissionApplicationController {
   }
 
   @Delete(':applicationId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'delete admission application with id' })
   @ApiResponse({
     status: HttpStatus.OK,

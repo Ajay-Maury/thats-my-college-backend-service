@@ -28,6 +28,8 @@ import {
 import { UpdateUserDto, UpdateUserRoleDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UsersService } from './users.service';
+import { KeyPermissionsGuard } from '../auth/guards/key-permission.gaurd';
+import { SWAGGER_CONSTANTS } from 'src/utils/constants';
 
 @Controller('users')
 @ApiTags('users')
@@ -37,6 +39,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'create new user' })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponseDto })
   async createUser(
@@ -70,6 +74,8 @@ export class UsersController {
   }
 
   @Post('oauth-login')
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'create user by oauth login details' })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponseDto })
   async oauthLogin(
@@ -105,9 +111,11 @@ export class UsersController {
   @Get()
   @UseGuards(
     JwtAuthGuard,
+    KeyPermissionsGuard,
     new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN]),
   )
-  @ApiBearerAuth('jwt')
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'get all users (for admin use only)' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto, isArray: true })
   async findAllUsers(@Res() res): Promise<UserResponseDto[]> {
@@ -129,8 +137,9 @@ export class UsersController {
   }
 
   @Get(':userId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'get user by user id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async findOneUserById(@Res() res, @Param('userId') userId: string) {
@@ -152,8 +161,8 @@ export class UsersController {
   }
 
   @Get('email/:email')
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth('jwt')
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'get user by email id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async findOneUserByEmail(@Res() res, @Param() userEmailDto: UserEmailDto) {
@@ -176,8 +185,9 @@ export class UsersController {
   }
 
   @Patch(':userId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'update user by user id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async updateUserById(
@@ -206,8 +216,13 @@ export class UsersController {
   }
 
   @Patch('role/update')
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.SUPER_ADMIN]))
-  @ApiBearerAuth('jwt')
+  @UseGuards(
+    JwtAuthGuard,
+    KeyPermissionsGuard,
+    new RoleGuard([UserRoleEnum.SUPER_ADMIN]),
+  )
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({
     summary: 'update user role by user email (for admin use only)',
   })
@@ -242,8 +257,13 @@ export class UsersController {
   }
 
   @Delete(':userId')
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN]))
-  @ApiBearerAuth('jwt')
+  @UseGuards(
+    JwtAuthGuard,
+    KeyPermissionsGuard,
+    new RoleGuard([UserRoleEnum.ADMIN]),
+  )
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'delete user by user id (for admin use only)' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async removeUserById(@Res() res, @Param('userId') userId: string) {

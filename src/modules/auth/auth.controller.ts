@@ -5,13 +5,21 @@ import {
   Logger,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.services';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   AuthenticateUserDto,
   UserAuthTokenResponse,
 } from './dto/user-auth.dto';
+import { KeyPermissionsGuard } from './guards/key-permission.gaurd';
+import { SWAGGER_CONSTANTS } from 'src/utils/constants';
 
 @Controller('auth') // Define the base route for this controller.
 @ApiTags('auth') // Add Swagger tags for documentation.
@@ -22,6 +30,8 @@ export class AuthController {
 
   @Post('') // Define a POST endpoint for user authentication.
   @ApiOperation({ summary: 'authenticate user' }) // Describe the operation for Swagger.
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiResponse({ status: HttpStatus.CREATED, type: UserAuthTokenResponse }) // Describe the response for Swagger.
   async authenticateUser(
     @Res() res, // Response object for sending HTTP responses.

@@ -40,7 +40,7 @@ async function bootstrap() {
     .addApiKey(
       {
         type: 'apiKey',
-        name: 'x-thats-my-college-api-config-key',
+        name: 'x-tmc-api-config-key',
         in: 'header',
       },
       SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY, // API key security scheme name

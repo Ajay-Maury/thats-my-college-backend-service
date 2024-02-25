@@ -30,6 +30,8 @@ import {
 } from './dto/college-response.dto';
 import { CollegeFilterDto, CreateCollegeDto } from './dto/create-college.dto';
 import { UpdateCollegeDto } from './dto/update-college.dto';
+import { KeyPermissionsGuard } from '../auth/guards/key-permission.gaurd';
+import { SWAGGER_CONSTANTS } from 'src/utils/constants';
 
 @Controller('college') // Defines the base route for this controller.
 @ApiTags('college') // Adds Swagger tags for documentation.
@@ -47,8 +49,13 @@ export class CollegeController {
 
   // Create a new college.
   @Post()
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN])) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
-  @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
+  @UseGuards(
+    JwtAuthGuard,
+    KeyPermissionsGuard,
+    new RoleGuard([UserRoleEnum.ADMIN]),
+  ) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY) // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Create college' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.CREATED, type: CollegeResponseDto }) // Describes the response for Swagger.
   public async createNewCollege(
@@ -88,6 +95,8 @@ export class CollegeController {
 
   // Get all colleges.
   @Get()
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'Get all colleges' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeResponseDto }) // Describes the response for Swagger.
   public async getAllCollege(
@@ -117,6 +126,8 @@ export class CollegeController {
 
   // Get a college by college ID.
   @Get(':collegeId')
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({ summary: 'Get college by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async getOneCollege(
@@ -145,8 +156,13 @@ export class CollegeController {
 
   // Update a college by college ID.
   @Patch(':collegeId')
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN])) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
-  @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
+  @UseGuards(
+    JwtAuthGuard,
+    KeyPermissionsGuard,
+    new RoleGuard([UserRoleEnum.ADMIN]),
+  ) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY) // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Update college by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async updateOneById(
@@ -181,8 +197,13 @@ export class CollegeController {
 
   // Delete a college and its courses by college ID.
   @Delete(':collegeId')
-  @UseGuards(JwtAuthGuard, new RoleGuard([UserRoleEnum.ADMIN])) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
-  @ApiBearerAuth('jwt') // Swagger decorator indicating that JWT token is required for this controller.
+  @UseGuards(
+    JwtAuthGuard,
+    KeyPermissionsGuard,
+    new RoleGuard([UserRoleEnum.ADMIN]),
+  ) // Apply JwtAuthGuard for authentication before accessing controller methods. This guard ensures that the user is authenticated with a valid JWT token.
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY) // Swagger decorator indicating that JWT token is required for this controller.
   @ApiOperation({ summary: 'Delete college and courses by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async deleteOneById(

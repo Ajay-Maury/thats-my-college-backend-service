@@ -21,6 +21,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { CallbackRequestsService } from './callback-requests.service';
 import { ResponseCallbackRequestDto } from './dto/response-callback-request.dto';
+import { KeyPermissionsGuard } from '../auth/guards/key-permission.gaurd';
+import { SWAGGER_CONSTANTS } from 'src/utils/constants';
 
 @Controller('callback-requests')
 @ApiTags('callback-requests')
@@ -31,8 +33,9 @@ export class CallbackRequestsController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({
     summary:
       'Check if callback request exists for a user, if not create a new one',
@@ -69,9 +72,11 @@ export class CallbackRequestsController {
   @Get(':userId')
   @UseGuards(
     JwtAuthGuard,
+    KeyPermissionsGuard,
     new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN]),
   )
-  @ApiBearerAuth('jwt')
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({
     summary: 'Get all callback request of a user (admin use only)',
   })
@@ -105,9 +110,11 @@ export class CallbackRequestsController {
   @Delete(':userId')
   @UseGuards(
     JwtAuthGuard,
+    KeyPermissionsGuard,
     new RoleGuard([UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN]),
   )
-  @ApiBearerAuth('jwt')
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_JWT)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
   @ApiOperation({
     summary: 'Delete one callback request of a user (admin use only)',
   })
