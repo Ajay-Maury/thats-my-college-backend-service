@@ -31,6 +31,11 @@ jobs:
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
 
+      - name: Delete old container
+        run: |
+          docker stop tmc-backend-container
+          docker rm -f tmc-backend-container
+
       - name: Create .env file locally
         run: |
           touch .env
