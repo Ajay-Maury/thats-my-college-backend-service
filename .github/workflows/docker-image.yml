@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest .
+
       - name: Create .env file
         run: |
           touch .env
@@ -22,15 +26,15 @@ jobs:
           echo "PORT=${{ secrets.PORT }}" >> .env
           # Add more environment variables as needed
 
-      - name: Build the Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest .
+      - name: Copy environment file to container
+        run: docker cp .env tmc-backend:/app/.env
+
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} docker.io
+
       - name: Publish image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
-        # run: docker push tmc-backend:latest
-      - name: Copy environment
-        run: docker cp .env tmc-backend:latest/app/.env
+
 
 
   deploy:
@@ -51,9 +55,4 @@ jobs:
             --name tmc-backend-container \
             ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend"
           
-          docker run -d -p 4000:4000 \
-            -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            -e PORT=${{ secrets.PORT }} \
-            --name tmc-backend-container \
-            ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend
+          docker run -d -p 4000:4000 --name tmc-backend-container ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend
