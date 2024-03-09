@@ -18,7 +18,7 @@ jobs:
           touch .env
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "TMC_API_CONFIG_KEY=${{ secrets.TMC_API_CONFIG_KEY }}" >> .env
           echo "PORT=${{ secrets.PORT }}" >> .env
           # Add more environment variables as needed
 
@@ -40,4 +40,11 @@ jobs:
       - name: Delete old container
         run: docker rm -f tmc-backend-container
       - name: Run docker container
-        run: docker run -d -p 4000:4000 --name tmc-backend-container ${{secrets.DOCKERHUB_USERNAME}}/tmc-backend   
+        run: |
+          docker run -d -p 4000:4000 \
+            -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e TMC_API_CONFIG_KEY=${{ secrets.TMC_API_CONFIG_KEY }} \
+            -e PORT=${{ secrets.PORT }} \
+            --name tmc-backend-container \
+            ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend
