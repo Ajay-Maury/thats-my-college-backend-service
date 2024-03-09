@@ -41,11 +41,17 @@ jobs:
         run: docker rm -f tmc-backend-container
       - name: Run docker container
         run: |
-          set -x
+          echo "Running Docker Command:"
+          echo "docker run -d -p 4000:4000 \
+            -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e PORT=${{ secrets.PORT }} \
+            --name tmc-backend-container \
+            ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend"
+          
           docker run -d -p 4000:4000 \
             -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
             -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -e PORT=${{ secrets.PORT }} \
             --name tmc-backend-container \
             ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend
-          set +x
