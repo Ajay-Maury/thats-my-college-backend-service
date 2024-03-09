@@ -22,9 +22,16 @@ jobs:
         # run: docker push tmc-backend:latest
 
 
-  # deploy:
-  #   needs: build
-  #   runs-on: [""]
+  deploy:
+    needs: build
+    runs-on: [aws-ec2]
+    steps:
+      - name: Pull image from Docker Hub
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
+      - name: Delete old container
+        run: docker rm -f tmc-backend-container
+      - name: Run docker container
+        run: docker run -d -p 4000:4000 -name tmc-backend-container ${{secrets.DOCKERHUB_USERNAME}}/tmc-backend
 
     # steps:
     # - uses: actions/checkout@v3
