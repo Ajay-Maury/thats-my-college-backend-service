@@ -18,7 +18,7 @@ jobs:
       - name: Build the Docker image
         run: docker build -t tmc-backend .
       - name: Publish image to Docker Hub
-        run: docker push tmc-backend:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
 
 
   # deploy:
