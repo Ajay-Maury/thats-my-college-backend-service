@@ -31,9 +31,4 @@ jobs:
       - name: Delete old container
         run: docker rm -f tmc-backend-container
       - name: Run docker container
-        run: docker run -d -p 4000:4000 -name tmc-backend-container ${{secrets.DOCKERHUB_USERNAME}}/tmc-backend
-
-    # steps:
-    # - uses: actions/checkout@v3
-    # - name: Build the Docker image
-    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+        run: docker run -d -p 4000:4000 --name tmc-backend-container ${{secrets.DOCKERHUB_USERNAME}}/tmc-backend
