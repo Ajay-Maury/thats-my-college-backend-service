@@ -17,24 +17,11 @@ jobs:
       - name: Build the Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest .
 
-      - name: Create .env file
-        run: |
-          touch .env
-          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "TMC_API_CONFIG_KEY=${{ secrets.TMC_API_CONFIG_KEY }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          # Add more environment variables as needed
-
-      - name: Copy environment file to container
-        run: docker cp .env tmc-backend:/app/.env
-
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} docker.io
 
       - name: Publish image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
-
 
 
   deploy:
@@ -43,16 +30,19 @@ jobs:
     steps:
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
-      - name: Delete old container
-        run: docker rm -f tmc-backend-container
+
+      - name: Create .env file locally
+        run: |
+          touch .env
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" > .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "TMC_API_CONFIG_KEY=${{ secrets.TMC_API_CONFIG_KEY }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          # Add more environment variables as needed
+
       - name: Run docker container
         run: |
-          echo "Running Docker Command:"
-          echo "docker run -d -p 4000:4000 \
-            -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            -e PORT=${{ secrets.PORT }} \
+          docker run -d -p 4000:4000 \
+            --env-file .env \
             --name tmc-backend-container \
-            ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend"
-          
-          docker run -d -p 4000:4000 --name tmc-backend-container ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend
+            ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend
