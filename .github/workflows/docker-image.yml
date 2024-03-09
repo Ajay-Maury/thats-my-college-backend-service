@@ -9,13 +9,23 @@ on:
 jobs:
 
   build:
-    steps:
-      - name:- Checkout source
-        users: actions/checkout@v3
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        run: ducker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build the Docker image
+        run: docker build --t tmc-backend .
+      - name: Publish image to Docker Hub
+        run: docker push tmc-backend:latest
+
+
+  # deploy:
+  #   needs: build
+  #   runs-on: [""]
+
+    # steps:
+    # - uses: actions/checkout@v3
+    # - name: Build the Docker image
+    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
