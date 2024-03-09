@@ -29,6 +29,8 @@ jobs:
       - name: Publish image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
         # run: docker push tmc-backend:latest
+      - name: Copy environment
+        run: docker cp .env tmc-backend:latest/app/.env
 
 
   deploy:
