@@ -15,15 +15,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Build the Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest .
-
-  docker_push:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} docker.io
       - name: Publish image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
+        # run: docker push tmc-backend:latest
+
 
   # deploy:
   #   needs: build
