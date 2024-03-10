@@ -1,4 +1,4 @@
-name: Docker Image
+name: Docker Image CI/CD
 
 on:
   push:
@@ -28,13 +28,30 @@ jobs:
     needs: build
     runs-on: [aws-ec2]
     steps:
-      - name: Pull image from Docker Hub
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
+      - name: Stop old container
+        run: |
+          CONTAINER_ID=$(docker ps -q -f name=tmc-backend-container)
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Container not found. Skipping stop action."
+            exit 0
+          else
+            echo "Container found. Stopping..."
+            docker stop tmc-backend-container
+            echo "Container stopped."
+          fi
+        shell: bash
 
       - name: Delete old container
         run: |
-          docker stop tmc-backend-container
           docker rm -f tmc-backend-container
+
+      - name: Remove old Docker images
+        run: |
+          docker images -q ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend | xargs -I {} docker rmi {}
+        shell: bash
+
+      - name: Pull image from Docker Hub
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
 
       - name: Create .env file locally
         run: |
