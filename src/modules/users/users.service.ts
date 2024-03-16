@@ -78,7 +78,7 @@ export class UsersService {
     if (!user)
       throw new NotFoundException(`User with email ${email} not found`);
 
-    return user;
+    return user.toObject();
   }
 
   // Update a user by their Id

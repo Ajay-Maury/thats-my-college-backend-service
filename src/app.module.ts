@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AdmissionApplicationModule } from './modules/admission-application/admission-application.module';
 import { CallbackRequestsModule } from './modules/callback-requests/callback-requests.module';
 import { PerformanceMiddleware } from './middlewares/request.middleware';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PerformanceMiddleware } from './middlewares/request.middleware';
     UsersModule,
     AdmissionApplicationModule,
     CallbackRequestsModule,
+    AdminModule,
   ],
   controllers: [AppController], // Define controllers for handling HTTP requests
   providers: [AppService], // Define application-level services

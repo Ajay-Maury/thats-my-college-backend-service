@@ -1,9 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { UsersService } from 'src/modules/users/users.service';
 import { AuthenticateUserDto } from './dto/user-auth.dto';
 import { UserResponseDto } from '../users/dto/user-response.dto';
+import { LoginAdminUserDto } from '../admin/dto/login-admin.dto';
+import { UserRoleEnum } from 'src/utils/enums/users.enums';
 
 @Injectable()
 export class AuthService {
@@ -46,6 +52,35 @@ export class AuthService {
 
     // Generate a JWT token with user information and return it.
     return this.generateJwtToken(user);
+  }
+
+  public async authenticateAdminUser(loginAdminUserDto: LoginAdminUserDto) {
+    const { email, password } = loginAdminUserDto;
+
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const passwordMatch = await compare(password, user.password);
+
+    delete user.password;
+
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isAdminOrSuperAdmin =
+      user.role.includes(UserRoleEnum.ADMIN) ||
+      user.role.includes(UserRoleEnum.SUPER_ADMIN);
+
+    if (!isAdminOrSuperAdmin) {
+      throw new ForbiddenException(`User is not authorized as Admin`);
+    }
+
+    const authToken = this.generateJwtToken(user);
+    return { ...user, authToken };
   }
 
   public generateJwtToken(user: UserResponseDto) {

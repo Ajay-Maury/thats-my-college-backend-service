@@ -32,7 +32,7 @@ export class AuthController {
   @ApiOperation({ summary: 'authenticate user' }) // Describe the operation for Swagger.
   @UseGuards(KeyPermissionsGuard)
   @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
-  @ApiResponse({ status: HttpStatus.CREATED, type: UserAuthTokenResponse }) // Describe the response for Swagger.
+  @ApiResponse({ status: HttpStatus.OK, type: UserAuthTokenResponse }) // Describe the response for Swagger.
   async authenticateUser(
     @Res() res, // Response object for sending HTTP responses.
     @Body() authenticateUserDto: AuthenticateUserDto, // Request body containing user authentication data.
@@ -54,7 +54,7 @@ export class AuthController {
       );
 
       // Return a success response with the authentication token.
-      return res.status(HttpStatus.CREATED).json({
+      return res.status(HttpStatus.OK).json({
         message: `Successfully authenticated user with email: ${authenticateUserDto.email}`,
         authToken: token,
         status: true,
