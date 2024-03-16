@@ -59,14 +59,13 @@ jobs:
     needs: build_and_publish
     if: success()  # Only deploy if the build and publish were successful
     steps:
-      - name: Manual approval
-        if: github.event_name == 'pull_request'
-        uses: tzkhan/approval-workflow@v1
+      - name: Manual approval for deployment
+        uses: mergeable-io/github-pr-merge-on-review@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          approval-comment: 'The deployment has been approved by the repository owner.'
+          merge-condition: 'includes'  # Adjust based on your requirements (e.g., 'includes', 'all')
+          merge-message: 'Pull request is ready to be merged.'
           approval-label: 'deployment-approved'
-      
+  
   deploy:
     runs-on: [aws-ec2]
     needs: deploy_approval
