@@ -17,6 +17,7 @@ import {
 import {
   AuthenticateUserDto,
   UserAuthTokenResponse,
+  VerifyUserTokenDto,
 } from './dto/user-auth.dto';
 import { KeyPermissionsGuard } from './guards/key-permission.gaurd';
 import { SWAGGER_CONSTANTS } from 'src/utils/constants';
@@ -28,7 +29,7 @@ export class AuthController {
 
   constructor(private readonly authService: AuthService) {} // Inject AuthService to access authentication logic.
 
-  @Post('') // Define a POST endpoint for user authentication.
+  @Post('generate-token') // Define a POST endpoint for user authentication.
   @ApiOperation({ summary: 'authenticate user' }) // Describe the operation for Swagger.
   @UseGuards(KeyPermissionsGuard)
   @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
@@ -65,6 +66,43 @@ export class AuthController {
         `Failed to authenticate user with email: ${authenticateUserDto.email}`,
         error,
       );
+
+      // Return an error response with a detailed error message.
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message, status: false });
+    }
+  }
+
+  @Post('validate-token') 
+  @ApiOperation({ summary: 'validate token' }) 
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
+  @ApiResponse({ status: HttpStatus.OK })
+  async verifyUserToken(
+    @Res() res, // Response object for sending HTTP responses.
+    @Body() verifyUserTokenDto: VerifyUserTokenDto, // Request body containing user authentication data.
+  ) {
+    try {
+      // Log that the authentication process has started for a user.
+      this.logger.log(`Initiated verifying user token`);
+
+      // Call the authService to authenticate the user and generate a token.
+      const user = await this.authService.getUserFromToken(
+        verifyUserTokenDto.token,
+      );
+      // Log that the user authentication was successful.
+      this.logger.log(`Successfully verified user token`);
+
+      // Return a success response with the authentication token.
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully verified user token`,
+        user,
+        status: true,
+      });
+    } catch (error) {
+      // Log an error message if user authentication fails.
+      this.logger.error(`Failed to verify user token`, error);
 
       // Return an error response with a detailed error message.
       return res
