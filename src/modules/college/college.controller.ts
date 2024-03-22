@@ -154,6 +154,36 @@ export class CollegeController {
     }
   }
 
+  // Get a college details by college ID.
+  @Get('details/:collegeId')
+  @UseGuards(KeyPermissionsGuard)
+  @ApiBearerAuth(SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY)
+  @ApiOperation({ summary: 'Get college & courses details by college id' }) // Describes the operation for Swagger.
+  @ApiResponse({ status: HttpStatus.OK }) // Describes the response for Swagger.
+  public async getOneCollegeDetails(
+    @Res() res,
+    @Param('collegeId') collegeId: string,
+  ): Promise<CollegeSingleResponseDto> {
+    try {
+      this.logger.log(`Initiated getting a college details by Id`);
+      const college = await this.collegeService.findCollegeDetails(collegeId);
+
+      // Log that the find a college.
+      this.logger.log(`Successfully get college details`);
+
+      return res.status(HttpStatus.OK).json({
+        status: true,
+        data: college,
+        message: `Successfully fetched college details with id #${collegeId}`,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to get college details`, error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: false, data: {}, message: error.message });
+    }
+  }
+
   // Update a college by college ID.
   @Patch(':collegeId')
   @UseGuards(

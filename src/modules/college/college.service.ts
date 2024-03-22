@@ -97,6 +97,17 @@ export class CollegeService {
     return college;
   }
 
+  async findCollegeDetails(id: string) {
+    const college = await this.collegeModal.findById(id);
+    if (!college) {
+      throw new NotFoundException(`College with id #${id} not found`);
+    }
+    const courses = await this.courseService.findOneCourseByQuery({
+      collegeId: id,
+    });
+    return { college, courses };
+  }
+
   async updateCollegeById(
     id: string,
     updateCollegeDto: UpdateCollegeDto,
