@@ -9,8 +9,8 @@ jobs:
   lint_and_test:
     runs-on: ubuntu-latest
 
-    # container:
-    #   image: node:18.16.1-slim
+    container:
+      image: node:18.16.1-slim
     
     steps:
       - name: Checkout source
@@ -35,7 +35,5 @@ jobs:
       - name: Build the Docker image
         run: docker build -t tmc-backend:latest .
 
-      - name: Remove Docker container and image
-        run: |
-          docker container prune -f
-          docker image prune -f
+      - name: Prune Docker system
+        run: docker system prune -af
