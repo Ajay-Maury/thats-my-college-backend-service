@@ -44,6 +44,11 @@ jobs:
       - name: Logout of Docker Hub
         run: docker logout
 
+      - name: Remove old Docker images
+        run: |
+          docker images -q ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend | xargs -I {} docker rmi {}
+        shell: bash
+
   deploy:
     runs-on: [aws-ec2]
     needs: build_and_publish
