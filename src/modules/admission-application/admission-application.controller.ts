@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Req,
+  Request,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -227,11 +228,13 @@ export class AdmissionApplicationController {
     type: AdmissionApplicationResponseDto,
   })
   async update(
+    @Request() req,
     @Res() res: Response,
     @Param('id') id: string,
     @Body() updateAdmissionApplicationDto: UpdateAdmissionApplicationDto,
   ) {
     try {
+      const userId = req?.user?._id;
       this.logger.log(
         `Initiated updated admission applications with id #${id}`,
       );
@@ -239,6 +242,7 @@ export class AdmissionApplicationController {
       const application = await this.admissionApplicationService.update(
         id,
         updateAdmissionApplicationDto,
+        userId,
       );
 
       this.logger.log(
@@ -278,11 +282,13 @@ export class AdmissionApplicationController {
     type: AdmissionApplicationResponseDto,
   })
   async updateAdmissionApplicationStatus(
+    @Request() req,
     @Res() res: Response,
     @Param('id') id: string,
     @Body() updateApplicationStatusDto: UpdateApplicationStatusDto,
   ) {
     try {
+      const userId = req?.user?._id;
       this.logger.log(
         `Initiated updating admission application status with id #${id}`,
       );
@@ -291,6 +297,7 @@ export class AdmissionApplicationController {
         await this.admissionApplicationService.updateAdmissionApplicationStatus(
           id,
           updateApplicationStatusDto,
+          userId,
         );
 
       this.logger.log(

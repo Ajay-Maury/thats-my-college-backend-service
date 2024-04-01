@@ -82,9 +82,13 @@ export class UsersService {
   }
 
   // Update a user by their Id
-  public async updateUserById(id: string, updateUserDto: UpdateUserDto) {
+  public async updateUserById(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    adminUserId: string,
+  ) {
     // Get updated info from entity util service
-    const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(adminUserId);
     // Find and update the user by Id
     const updatedUser = await this.userModel.findByIdAndUpdate(
       id,
@@ -101,6 +105,7 @@ export class UsersService {
   // Update a user password
   public async updateUserPassword(
     updateUserPasswordDto: UpdateUserPasswordDto,
+    adminUserId: string,
   ) {
     const { email, password } = updateUserPasswordDto;
 
@@ -109,7 +114,7 @@ export class UsersService {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Get updated info from entity util service
-    const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(adminUserId);
     // Find and update the user by Id
     const updatedUser = await this.userModel.findByIdAndUpdate(
       { _id: user._id },
@@ -138,10 +143,16 @@ export class UsersService {
     return { ...userResponse, authToken };
   }
 
-  public async updateUserRole(updateUserRoleDto: UpdateUserRoleDto) {
+  public async updateUserRole(
+    updateUserRoleDto: UpdateUserRoleDto,
+    adminUserId: string,
+  ) {
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
+      adminUserId,
+    );
     const user = await this.userModel.findOneAndUpdate(
       { email: updateUserRoleDto.email },
-      updateUserRoleDto,
+      { ...updateUserRoleDto, ...updatedInfo },
       {
         new: true,
         select: '-password',

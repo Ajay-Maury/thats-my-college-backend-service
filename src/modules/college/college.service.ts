@@ -19,10 +19,10 @@ export class CollegeService {
 
   async createCollege(
     createCollegeDto: CreateCollegeDto,
-    authorization: string,
+    AdminUserId: string,
   ) {
     const createdInfo = await this.entityUtilsService.getCreatedInfo(
-      authorization,
+      AdminUserId,
     );
 
     return await this.collegeModal.create({
@@ -97,13 +97,24 @@ export class CollegeService {
     return college;
   }
 
+  async findCollegeDetails(id: string) {
+    const college = await this.collegeModal.findById(id);
+    if (!college) {
+      throw new NotFoundException(`College with id #${id} not found`);
+    }
+    const courses = await this.courseService.findOneCourseByQuery({
+      collegeId: id,
+    });
+    return { college, courses };
+  }
+
   async updateCollegeById(
     id: string,
     updateCollegeDto: UpdateCollegeDto,
-    authorization: string,
+    userId: string,
   ) {
     const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
-      authorization,
+      userId,
     );
 
     const existingCollege = await this.collegeModal.findByIdAndUpdate(

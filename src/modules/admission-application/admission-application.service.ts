@@ -78,7 +78,7 @@ export class AdmissionApplicationService {
   ) {
     await this.checkPayloadIds(createAdmissionApplicationDto);
 
-    const createdInfo = await this.entityUtilsService.getCreatedInfo();
+    const createdInfo = await this.entityUtilsService.getCreatedInfo(userId);
 
     return await this.admissionApplicationModule.create({
       ...createAdmissionApplicationDto,
@@ -128,10 +128,11 @@ export class AdmissionApplicationService {
   public async update(
     id: string,
     updateAdmissionApplicationDto: UpdateAdmissionApplicationDto,
+    userId: string,
   ) {
     await this.checkPayloadIds(updateAdmissionApplicationDto);
 
-    const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(userId);
     const updatedApplication =
       await this.admissionApplicationModule.findByIdAndUpdate(
         id,
@@ -153,8 +154,9 @@ export class AdmissionApplicationService {
   public async updateAdmissionApplicationStatus(
     id: string,
     updateApplicationStatusDto: UpdateApplicationStatusDto,
+    userId: string,
   ) {
-    const updatedInfo = await this.entityUtilsService.getUpdatedInfo();
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(userId);
     const updatedApplication =
       await this.admissionApplicationModule.findByIdAndUpdate(
         id,

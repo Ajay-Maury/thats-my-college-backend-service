@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -53,16 +54,17 @@ export class CoursesController {
   @ApiResponse({ status: HttpStatus.CREATED, type: CourseResponseDto })
   @ApiOperation({ summary: 'Create courses for college' })
   public async createCollegeCourses(
+    @Request() req,
     @Res() res,
     @Body() createCourseDto: CreateCourseDto,
-    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CourseResponseDto> {
     try {
+      const userId = req?.user?._id;
       // Log that the process of creating a new course with college id has started.
       this.logger.log(`Initiated creating new course`);
       const courses = await this.coursesService.createCourse(
         createCourseDto,
-        authorization,
+        userId,
       );
       this.logger.log(`Successfully Created new courses`);
       return res.status(HttpStatus.CREATED).json({
@@ -203,17 +205,18 @@ export class CoursesController {
   @ApiOperation({ summary: 'Update course by course id' })
   @ApiResponse({ status: HttpStatus.OK, type: CourseResponseDto })
   public async updateCourseByCourseId(
+    @Request() req,
     @Res() res,
     @Param('courseId') courseId: string,
     @Body() updateCourseDto: UpdateCourseDto,
-    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CourseResponseDto> {
     try {
+      const userId = req?.user?._id;
       this.logger.log(`Initiated updating courses by course Id #${courseId}`);
       const course = await this.coursesService.updateCourseByCourseId(
         courseId,
         updateCourseDto,
-        authorization,
+        userId,
       );
 
       this.logger.log(`Successfully Updated course by course id #${courseId}`);
@@ -244,18 +247,18 @@ export class CoursesController {
   @ApiOperation({ summary: 'Update course by college id' })
   @ApiResponse({ status: HttpStatus.OK, type: CourseResponseDto })
   public async updateCourseByCollegeId(
+    @Request() req,
     @Res() res,
     @Param('collegeId') collegeId: string,
-    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
-
     @Body() updateCourseDto: UpdateCourseDto,
   ): Promise<CourseResponseDto> {
     try {
+      const userId = req?.user?._id;
       this.logger.log(`Initiated Update course by college id #${collegeId}`);
       const course = await this.coursesService.updateCourseByCollegeId(
         collegeId,
         updateCourseDto,
-        authorization,
+        userId,
       );
 
       this.logger.log(

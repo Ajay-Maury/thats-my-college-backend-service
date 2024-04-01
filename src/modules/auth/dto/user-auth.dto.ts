@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
 
 export class AuthenticateUserDto {
   // Validate that the password property is not empty and is a strong password.
@@ -21,6 +21,12 @@ export class AuthenticateUserDto {
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail({}, { message: 'Invalid email format' })
   email: string;
+}
+
+export class VerifyUserTokenDto {
+  @IsNotEmpty({ message: 'Token is required' })
+  @IsString()
+  token: string;
 }
 
 export class UserAuthTokenResponse {

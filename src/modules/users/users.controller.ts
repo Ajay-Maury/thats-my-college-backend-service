@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Request,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -191,15 +192,18 @@ export class UsersController {
   @ApiOperation({ summary: 'update user by user id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async updateUserById(
+    @Request() req,
     @Res() res,
     @Param('userId') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     try {
+      const updaterUserId = req?.user?._id;
       this.logger.log(`Initiated updating user by user id #${userId}`);
       const updatedUser = await this.usersService.updateUserById(
         userId,
         updateUserDto,
+        updaterUserId,
       );
       this.logger.log(`Successfully updated user by user id #${userId}`);
       return res.status(HttpStatus.OK).json({
@@ -228,14 +232,17 @@ export class UsersController {
   })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   async updateUserRole(
+    @Request() req,
     @Res() res,
     @Body() updateUserRoleDto: UpdateUserRoleDto,
   ) {
     const { email } = updateUserRoleDto;
     try {
+      const adminUserId = req?.user?._id;
       this.logger.log(`Initiated updating user role by user email:- ${email}`);
       const updatedUser = await this.usersService.updateUserRole(
         updateUserRoleDto,
+        adminUserId,
       );
       this.logger.log(
         `Successfully updated user role by user email:- ${email}`,

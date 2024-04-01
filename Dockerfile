@@ -1,25 +1,34 @@
-# Use the official Node.js image as the base image
-FROM node:18.16.1-alpine
+# Use a slimmer Node.js base image with essential packages for production
+FROM node:18.16.1-slim
 
-# Set the working directory inside the container
+# Install global Node.js packages for NestJS development
+# RUN npm i -g @nestjs/cli typescript ts-node
+
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to install dependencies
+# Copy only package.json and package-lock.json for efficient dependency installation
 COPY package*.json ./
 
-# Install project dependencies
+# Install only production dependencies
+# RUN npm install --production
+
+# Install only dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the remaining application code
 COPY . .
 
 # Build the Nest.js application
 RUN npm run build
 
-# Expose the PORT environment variable (default to 4000 if not provided)
+# Set the default port to 4000 if not overridden
 ARG PORT=4000
 ENV PORT=$PORT
 EXPOSE $PORT
 
-# Start the Nest.js application using the start:prod script
+# Switch to a non-root user for security
+USER node
+
+# Start the application using the production script
 CMD ["npm", "run", "start:prod"]

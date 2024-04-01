@@ -18,15 +18,15 @@ export class EntityUtilsService {
   }
 
   // Create and return information about when and by whom an entity was created.
-  public async getCreatedInfo(authorization = ''): Promise<ICreatedInfo> {
+  public async getCreatedInfo(userId = 'NA'): Promise<ICreatedInfo> {
     try {
-      const currentUser = await this.getCurrentUser(authorization);
+      // const currentUser = await this.getCurrentUser(authorization);
       // Return created info with current timestamp and user details.
       return {
         createdOn: new Date().toUTCString(),
-        createdBy: currentUser._id,
+        createdBy: userId,
         updatedOn: new Date().toUTCString(),
-        updatedBy: currentUser._id,
+        updatedBy: userId,
         isDeleted: false,
       };
     } catch (error) {
@@ -42,14 +42,14 @@ export class EntityUtilsService {
   }
 
   // Create and return information about when and by whom an entity was updated.
-  public async getUpdatedInfo(authorization = ''): Promise<IUpdatedInfo> {
+  public async getUpdatedInfo(userId = 'NA'): Promise<IUpdatedInfo> {
     try {
-      const currentUser = await this.getCurrentUser(authorization);
+      // const currentUser = await this.getCurrentUser(authorization);
 
       // Return updated info with current timestamp and user details.
       return {
         updatedOn: new Date().toUTCString(),
-        updatedBy: currentUser._id,
+        updatedBy: userId,
       };
     } catch (error) {
       // If an error occurs, return default values.
