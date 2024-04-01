@@ -15,9 +15,9 @@ export class CoursesService {
     private readonly entityUtilsService: EntityUtilsService, // Injects the EntityUtilsService.
   ) {}
 
-  async createCourse(createCourseDto: CreateCourseDto, authorization: string) {
+  async createCourse(createCourseDto: CreateCourseDto, AdminUserId: string) {
     const createdInfo = await this.entityUtilsService.getCreatedInfo(
-      authorization,
+      AdminUserId,
     );
     return await this.courseModel.create({
       ...createCourseDto,
@@ -172,11 +172,9 @@ export class CoursesService {
   async updateCourseByCourseId(
     courseId: string,
     updateCourseDto: UpdateCourseDto,
-    authorization: string,
+    userId: string,
   ) {
-    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
-      authorization,
-    );
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(userId);
     const existingCourse = await this.courseModel.findByIdAndUpdate(
       courseId,
       { ...updateCourseDto, ...updatedInfo },
@@ -190,7 +188,7 @@ export class CoursesService {
   async updateCourseByCollegeId(
     collegeId: string,
     updateCourseDto: UpdateCourseDto,
-    authorization: string,
+    userId: string,
   ) {
     const course = await this.courseModel.findOne({ collegeId });
     if (!course)
@@ -198,9 +196,7 @@ export class CoursesService {
         `Course with college id #${collegeId} not found`,
       );
 
-    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
-      authorization,
-    );
+    const updatedInfo = await this.entityUtilsService.getUpdatedInfo(userId);
 
     const existingCourse = await this.courseModel.findOneAndUpdate(
       { collegeId },

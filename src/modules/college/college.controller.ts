@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -59,18 +60,19 @@ export class CollegeController {
   @ApiOperation({ summary: 'Create college' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.CREATED, type: CollegeResponseDto }) // Describes the response for Swagger.
   public async createNewCollege(
+    @Request() req,
     @Res() res,
     @Body() createCollegeDto: CreateCollegeDto,
-    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CollegeResponseDto> {
     try {
+      const userId = req?.user?._id;
       // Log that the process of creating a new college has started.
       this.logger.log(`Initiated creating new college`);
 
       // Call the collegeService to create a new college with provided data and authorization.
       const college = await this.collegeService.createCollege(
         createCollegeDto,
-        authorization,
+        userId,
       );
 
       // Log that the college creation was successful.
@@ -196,17 +198,18 @@ export class CollegeController {
   @ApiOperation({ summary: 'Update college by college id' }) // Describes the operation for Swagger.
   @ApiResponse({ status: HttpStatus.OK, type: CollegeSingleResponseDto }) // Describes the response for Swagger.
   public async updateOneById(
+    @Request() req,
     @Res() res,
     @Param('collegeId') collegeId: string,
     @Body() updateCollegeDto: UpdateCollegeDto,
-    @GetAuthToken() authorization: string, // custom decorator GetAuthToken to get authorization token string
   ): Promise<CollegeSingleResponseDto> {
     try {
+      const userId = req?.user?._id;
       this.logger.log(`Initiated update a college by Id`);
       const college = await this.collegeService.updateCollegeById(
         collegeId,
         updateCollegeDto,
-        authorization,
+        userId,
       );
 
       // Log that the college updated was successful.

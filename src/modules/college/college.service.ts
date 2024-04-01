@@ -19,10 +19,10 @@ export class CollegeService {
 
   async createCollege(
     createCollegeDto: CreateCollegeDto,
-    authorization: string,
+    AdminUserId: string,
   ) {
     const createdInfo = await this.entityUtilsService.getCreatedInfo(
-      authorization,
+      AdminUserId,
     );
 
     return await this.collegeModal.create({
@@ -111,10 +111,10 @@ export class CollegeService {
   async updateCollegeById(
     id: string,
     updateCollegeDto: UpdateCollegeDto,
-    authorization: string,
+    userId: string,
   ) {
     const updatedInfo = await this.entityUtilsService.getUpdatedInfo(
-      authorization,
+      userId,
     );
 
     const existingCollege = await this.collegeModal.findByIdAndUpdate(
