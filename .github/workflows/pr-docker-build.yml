@@ -35,5 +35,7 @@ jobs:
       - name: Build the Docker image
         run: docker build -t tmc-backend:latest .
 
-      - name: Prune Docker system
-        run: docker system prune -af
+      - name: Remove Docker container and image
+        run: |
+          docker container prune -f
+          docker image prune -f
