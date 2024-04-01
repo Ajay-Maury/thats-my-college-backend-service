@@ -14,7 +14,7 @@ COPY package*.json ./
 # RUN npm install --production
 
 # Install only dependencies
-RUN npm ci
+RUN npm install
 
 # Copy the remaining application code
 COPY . .
