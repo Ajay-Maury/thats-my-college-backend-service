@@ -9,8 +9,8 @@ jobs:
   lint_and_test:
     runs-on: ubuntu-latest
 
-    container:
-      image: node:18.16.1-slim
+    # container:
+    #   image: node:18.16.1-slim
     
     steps:
       - name: Checkout source
