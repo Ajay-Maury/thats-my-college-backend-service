@@ -6,8 +6,28 @@ on:
 
 jobs:
 
-  build:
+  lint_and_test:
     runs-on: ubuntu-latest
+
+    container:
+      image: node:18.16.1-slim
+    
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code
+        run: npm run lint
+
+      # - name: Run tests
+      #   run: npm test  # Or use the appropriate command for testing
+
+  docker_build:
+    runs-on: ubuntu-latest
+    needs: lint_and_test
     steps:
       - name: Checkout source
         uses: actions/checkout@v4

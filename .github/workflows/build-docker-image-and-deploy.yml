@@ -3,13 +3,15 @@ name: Docker Image CI/CD
 on:
   push:
     branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
 
 jobs:
 
   lint_and_test:
     runs-on: ubuntu-latest
+    
+    container:
+      image: node:18.16.1-slim
+    
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -61,13 +63,10 @@ jobs:
         shell: bash
 
       - name: Delete old container
-        run: |
-          docker rm -f tmc-backend-container
+        run: docker container prune
 
       - name: Remove old Docker images
-        run: |
-          docker images -q ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend | xargs -I {} docker rmi {}
-        shell: bash
+        run: docker image prune
 
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
