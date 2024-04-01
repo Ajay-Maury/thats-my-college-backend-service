@@ -35,6 +35,12 @@ jobs:
       - name: Build the Docker image
         run: docker build -t tmc-backend:latest .
 
+      - name: Stop and remove all containers and images of tmc-backend
+        run: |
+          docker stop $(docker ps -aqf "name=tmc-backend")
+          docker rm $(docker ps -aqf "name=tmc-backend")
+          docker rmi $(docker images -q tmc-backend)
+
       - name: Remove Docker container and image
         run: |
           docker container prune -f
