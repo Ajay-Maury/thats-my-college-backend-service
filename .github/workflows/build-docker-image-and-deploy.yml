@@ -15,10 +15,10 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Install dependencies
-        run: npm ci  # Or use the appropriate command for your project
+        run: npm Install
 
       - name: Lint code
-        run: npm run lint  # Or use the appropriate command for linting
+        run: npm run lint
 
       # - name: Run tests
       #   run: npm test  # Or use the appropriate command for testing
