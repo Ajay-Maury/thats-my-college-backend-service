@@ -63,10 +63,13 @@ jobs:
         shell: bash
 
       - name: Delete old container
-        run: docker container prune
+        run: |
+          docker rm -f tmc-backend-container
 
       - name: Remove old Docker images
-        run: docker image prune
+        run: |
+          docker images -q ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend | xargs -I {} docker rmi {}
+        shell: bash
 
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tmc-backend:latest
