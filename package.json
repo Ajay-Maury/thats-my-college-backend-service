@@ -33,6 +33,7 @@
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.3.7",
     "@nestjs/swagger": "^7.1.10",
+    "@nestjs/terminus": "^10.2.3",
     "bcrypt": "^5.1.1",
     "bunyan": "^1.8.15",
     "class-transformer": "^0.5.1",

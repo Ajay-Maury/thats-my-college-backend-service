@@ -12,6 +12,7 @@ import { AdmissionApplicationModule } from './modules/admission-application/admi
 import { CallbackRequestsModule } from './modules/callback-requests/callback-requests.module';
 import { PerformanceMiddleware } from './middlewares/request.middleware';
 import { AdminModule } from './modules/admin/admin.module';
+import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AdminModule } from './modules/admin/admin.module';
       // Configure global environment variables
       isGlobal: true, // Make the configuration available globally
     }),
+    TerminusModule,
     AuthModule,
     EntityUtilsModule, // Import the EntityUtilsModule for entity utils services
     DatabaseModule, // Import the DatabaseModule for database connectivity
